@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CUHK LoopBook</string>
+
+    <string name="title_section1">Books</string>
+    <string name="title_section2">Login</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="action_settings">Settings</string>
+</resources>

@@ -1,6 +1,9 @@
 *.jar
+!app/libs/*.jar
 *.war
 *.ear
 *.class
 *.swp
+*.idea/
+*.gradle/
 build/

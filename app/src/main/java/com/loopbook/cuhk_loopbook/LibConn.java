@@ -21,8 +21,8 @@ public class LibConn {
 
     public void login() {
         Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
-                         .data("code", this.name, "pin", this.passwd)
-                         .method(Connection.Method.POST);
+                               .data("code", this.name, "pin", this.passwd)
+                               .method(Connection.Method.POST);
         Connection.Response resp;
         Document doc;
 
@@ -48,7 +48,6 @@ public class LibConn {
         }
 
         Elements bookrows = doc.select("table.patFunc > tbody > tr.patFuncEntry");
-        // System.out.println(bookrows.size());
 
         ArrayList<Map<String, String>> bookList = new ArrayList<>();
 
@@ -58,8 +57,6 @@ public class LibConn {
             info.put("title", row.select(".patFuncTitle").text().split("/")[0]);
             info.put("dueDate", row.select(".patFuncStatus").text().substring(4, 12));
             bookList.add(info);
-
-            // System.out.println(row.text());
         }
 
         return bookList;

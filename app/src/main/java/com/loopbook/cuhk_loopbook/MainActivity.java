@@ -190,7 +190,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 ArrayList<String> books = new ArrayList<>();
 
                 for (Map<String, String> book: myLib.getBooks()) {
-                    // System.out.printf("Title: %s, Date: %s\n", book.get("title"), book.get("dueDate"));
                     books.add(book.get("title") + "\n" + book.get("dueDate"));
                 }
 
@@ -204,7 +203,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 lv.setAdapter(arrayAdapter);
 
             } else if (myNumber == 2) {
-                //((TextView)tv).setText(head);
             }
 
             return rootView;

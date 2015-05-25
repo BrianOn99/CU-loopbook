@@ -181,6 +181,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+/* add 25/5 */
+            View tv = rootView.findViewById(R.id.text);
+            int myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            //((TextView)tv).setText("Fragment #" + mNum);
+            ((TextView)tv).setText("Fragment #" + myNumber);
+/* end add 25/5 */
+
             return rootView;
         }
     }

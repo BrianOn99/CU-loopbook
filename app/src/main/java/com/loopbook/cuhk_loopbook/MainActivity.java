@@ -156,10 +156,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     /**
      * A placeholder fragment containing a simple view.
-     * This is an inner class, so that the object can easily reference outer
-     * "this".
      */
-    public class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -169,7 +167,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public PlaceholderFragment(int sectionNumber) {
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            this.setArguments(args);
+            setArguments(args);
         }
 
         public PlaceholderFragment() {
@@ -196,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 // Second param is the resource Id for list layout row item
                 // Third param is input array 
                 ArrayAdapter arrayAdapter = new ArrayAdapter(
-                        MainActivity.this,
+                        getActivity(),
                         android.R.layout.simple_list_item_1,
                         books);
 

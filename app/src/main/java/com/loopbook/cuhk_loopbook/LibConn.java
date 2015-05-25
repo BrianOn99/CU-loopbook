@@ -1,4 +1,4 @@
-package com.loopbook.LibConn.java;
+package com.loopbook.cuhk_loopbook;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

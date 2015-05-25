@@ -7,23 +7,14 @@ import org.jsoup.select.Elements;
 import org.jsoup.Connection;
 import java.util.*;
 
-public class LibConn {
-    public static void main(String[] args) {
-        CuLib myLib = new CuLib("1155032703", "19940122");
-        myLib.login();
-        for (Map<String, String> book: myLib.getBooks()) {
-            System.out.printf("Title: %s, Date: %s\n", book.get("title"), book.get("dueDate"));
-        }
-    }
-}
 
-class CuLib {
+public class LibConn {
     private final String name;
     private final String passwd;
     private String bookhref;
     private Map<String, String> cookies;
 
-    public CuLib(String name, String passwd) {
+    public LibConn(String name, String passwd) {
         this.name = name;
         this.passwd = passwd;
     }
@@ -63,7 +54,8 @@ class CuLib {
 
         for (Element row : bookrows) {
             Map<String, String> info = new HashMap<>();
-            info.put("title", row.select(".patFuncTitle").text());
+            /* the patfunc field has book name and author seperated by "/" */
+            info.put("title", row.select(".patFuncTitle").text().split("/")[0]);
             info.put("dueDate", row.select(".patFuncStatus").text().substring(4, 12));
             bookList.add(info);
 

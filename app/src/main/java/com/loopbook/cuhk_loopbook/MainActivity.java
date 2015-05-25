@@ -1,6 +1,6 @@
 package com.loopbook.cuhk_loopbook;
 
-import java.util.Locale;
+import java.util.*;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.loopbook.cuhk_loopbook.LibConn;
 
@@ -130,7 +132,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return new PlaceholderFragment(position + 1);
         }
 
         @Override
@@ -154,24 +156,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     /**
      * A placeholder fragment containing a simple view.
+     * This is an inner class, so that the object can easily reference outer
+     * "this".
      */
-    public static class PlaceholderFragment extends Fragment {
+    public class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public PlaceholderFragment(int sectionNumber) {
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
+            this.setArguments(args);
         }
 
         public PlaceholderFragment() {
@@ -180,13 +178,34 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-/* add 25/5 */
-            View tv = rootView.findViewById(R.id.text);
             int myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            //((TextView)tv).setText("Fragment #" + mNum);
-            ((TextView)tv).setText("Fragment #" + myNumber);
-/* end add 25/5 */
+
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            ListView lv = (ListView) rootView.findViewById(R.id.book_list);
+
+            if (myNumber == 1) {
+                LibConn myLib = new LibConn("1155032703", "19940122");
+                myLib.login();
+
+                ArrayList<String> books = new ArrayList<>();
+
+                for (Map<String, String> book: myLib.getBooks()) {
+                    // System.out.printf("Title: %s, Date: %s\n", book.get("title"), book.get("dueDate"));
+                    books.add(book.get("title") + "\n" + book.get("dueDate"));
+                }
+
+                // Second param is the resource Id for list layout row item
+                // Third param is input array 
+                ArrayAdapter arrayAdapter = new ArrayAdapter(
+                        MainActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        books);
+
+                lv.setAdapter(arrayAdapter);
+
+            } else if (myNumber == 2) {
+                //((TextView)tv).setText(head);
+            }
 
             return rootView;
         }

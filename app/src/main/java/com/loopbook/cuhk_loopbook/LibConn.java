@@ -39,7 +39,7 @@ public class LibConn {
         this.cookies = resp.cookies();
     }
 
-    public ArrayList<Map<String, String>> getBooks() {
+    public Element getBooksElement() {
         Document doc;
         try {
             doc = Jsoup.connect(this.bookhref).cookies(this.cookies).get();
@@ -47,8 +47,13 @@ public class LibConn {
             throw new RuntimeException("Failed connection", e); 
         }
 
-        Elements bookrows = doc.select("table.patFunc > tbody > tr.patFuncEntry");
+        Element table = doc.select("table.patFunc").first();
 
+        return table;
+    }
+
+    public ArrayList<Map<String, String>> getBooksFromElement(Element elm) {
+        Elements bookrows = elm.select("table.patFunc > tbody > tr.patFuncEntry");
         ArrayList<Map<String, String>> bookList = new ArrayList<>();
 
         for (Element row : bookrows) {
@@ -60,5 +65,13 @@ public class LibConn {
         }
 
         return bookList;
+    }
+
+    public ArrayList<Map<String, String>> getBooks() {
+        return getBooksFromElement(getBooksElement());
+    }
+
+    public String getBooksHtml() {
+        return getBooksElement().outerHtml();
     }
 }

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.loopbook.cuhk_loopbook.LibConn;
 import com.loopbook.cuhk_loopbook.DataIO;
@@ -184,6 +185,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
 
             if (myNumber == 1) {
+                String msg = LibConn.isConnectable() ? "connecting" : "No connection";
+                Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
+                toast.show();
+
                 Element elm = DataIO.refreshStoredData(getActivity());
 
                 ArrayList<String> books = new ArrayList<>();
@@ -197,9 +202,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         getActivity(),
                         android.R.layout.simple_list_item_1,
                         books);
-
                 lv.setAdapter(arrayAdapter);
-
             } else if (myNumber == 2) {
             }
 

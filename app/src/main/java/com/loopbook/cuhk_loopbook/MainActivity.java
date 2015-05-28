@@ -21,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.loopbook.cuhk_loopbook.LibConn;
+import com.loopbook.cuhk_loopbook.DataIO;
+import org.jsoup.nodes.Element;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -182,12 +184,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
 
             if (myNumber == 1) {
-                LibConn myLib = new LibConn("1155032703", "19940122");
-                myLib.login();
+                Element elm = DataIO.refreshStoredData(getActivity());
 
                 ArrayList<String> books = new ArrayList<>();
-
-                for (Map<String, String> book: myLib.getBooks()) {
+                for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
                     books.add(book.get("title") + "\n" + book.get("dueDate"));
                 }
 

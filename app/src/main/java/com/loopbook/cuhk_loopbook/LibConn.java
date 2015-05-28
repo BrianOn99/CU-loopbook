@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.Connection;
 import java.util.*;
+import java.net.InetAddress;
 
 
 public class LibConn {
@@ -17,6 +18,16 @@ public class LibConn {
     public LibConn(String name, String passwd) {
         this.name = name;
         this.passwd = passwd;
+    }
+
+    public static boolean isConnectable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            return !ipAddr.equals("");
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     public void login() {
@@ -52,7 +63,7 @@ public class LibConn {
         return table;
     }
 
-    public ArrayList<Map<String, String>> getBooksFromElement(Element elm) {
+    public static ArrayList<Map<String, String>> getBooksFromElement(Element elm) {
         Elements bookrows = elm.select("table.patFunc > tbody > tr.patFuncEntry");
         ArrayList<Map<String, String>> bookList = new ArrayList<>();
 

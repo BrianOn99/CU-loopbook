@@ -27,9 +27,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.content.Context;
 
-import android.support.v4.app.NotificationCompat;
-import android.app.NotificationManager;
-
 import com.loopbook.cuhk_loopbook.LibConn;
 import com.loopbook.cuhk_loopbook.DataIO;
 import org.jsoup.nodes.Element;
@@ -96,38 +93,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     private void scheduleNotification(int delaySec) {
         Intent notificationIntent = new Intent(this, DueChecker.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        //alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
 
-/*
-        // Template to issue notification directly
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_launcher);
-        builder.setContentTitle("Notifications Title");
-        builder.setContentText("Your notification content here.");
+        // Set the alarm to start at approximately 2:00 p.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 16);
 
-        // Large icon appears on the left of the notification
-        // ruilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
-
-        // This intent is fired when notification is clicked
-        // Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://javatechig.com/"));
-        // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                getApplicationContext(),
-                0,
-                new Intent(), // add this
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(contentIntent);
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        // Will display the notification in the notification bar
-        notificationManager.notify(1, builder.build());
-*/
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                                     AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     @Override

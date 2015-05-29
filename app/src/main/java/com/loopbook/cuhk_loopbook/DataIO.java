@@ -1,10 +1,12 @@
 package com.loopbook.cuhk_loopbook;
 
+import java.util.*;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import android.content.Context;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.jsoup.Jsoup; 
 
 import com.loopbook.cuhk_loopbook.LibConn;
@@ -38,12 +40,14 @@ public class DataIO {
 
         try {
             in = new BufferedInputStream(c.openFileInput(filename));
-            Element elm = Jsoup.parse(in, "UTF-8", "").select("table.patFunc").first();
+            Element elm = Jsoup.parse(in, "UTF-8", "")
+                               .select("table.patFunc").first();
             in.close();
             return elm;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed getting stored file", e);
+            return new Element(Tag.valueOf("table"), "").classNames(
+                           new HashSet(Arrays.asList("patFunc"))
+                       );
         }
     }
 }

@@ -185,11 +185,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
 
             if (myNumber == 1) {
-                String msg = LibConn.isConnectable() ? "connecting" : "No connection";
+                boolean connectable = LibConn.isConnectable();
+                String msg = connectable ? "connecting" : "No connection";
                 Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
                 toast.show();
 
-                Element elm = DataIO.refreshStoredData(getActivity());
+                Element elm = connectable ?
+                              DataIO.refreshStoredData(getActivity()) :
+                              DataIO.getStoredData(getActivity());
 
                 ArrayList<String> books = new ArrayList<>();
                 for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {

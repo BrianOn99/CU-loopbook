@@ -21,6 +21,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent; 
+import android.os.SystemClock;
+import android.content.Context;
+
+import android.support.v4.app.NotificationCompat;
+import android.app.NotificationManager;
+
 import com.loopbook.cuhk_loopbook.LibConn;
 import com.loopbook.cuhk_loopbook.DataIO;
 import org.jsoup.nodes.Element;
@@ -81,8 +90,45 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        scheduleNotification(3);
     }
 
+    private void scheduleNotification(int delaySec) {
+        Intent notificationIntent = new Intent(this, DueChecker.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+
+/*
+        // Template to issue notification directly
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setContentTitle("Notifications Title");
+        builder.setContentText("Your notification content here.");
+
+        // Large icon appears on the left of the notification
+        // ruilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
+
+        // This intent is fired when notification is clicked
+        // Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://javatechig.com/"));
+        // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                getApplicationContext(),
+                0,
+                new Intent(), // add this
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(contentIntent);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        // Will display the notification in the notification bar
+        notificationManager.notify(1, builder.build());
+*/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,7 +224,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+                Bundle savedInstanceState) {
             int myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -191,8 +237,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 toast.show();
 
                 Element elm = connectable ?
-                              DataIO.refreshStoredData(getActivity()) :
-                              DataIO.getStoredData(getActivity());
+                    DataIO.refreshStoredData(getActivity()) :
+                    DataIO.getStoredData(getActivity());
 
                 ArrayList<String> books = new ArrayList<>();
                 for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
@@ -212,5 +258,4 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             return rootView;
         }
     }
-
 }

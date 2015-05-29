@@ -98,15 +98,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
         AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        //alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
 
         // Set the alarm to start at approximately 2:00 p.m.
+        /*
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 16);
 
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                                      AlarmManager.INTERVAL_DAY, pendingIntent);
+         */
     }
 
     @Override

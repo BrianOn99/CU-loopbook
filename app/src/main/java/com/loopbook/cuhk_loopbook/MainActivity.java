@@ -193,6 +193,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private ArrayAdapter arrayAdapter;
+        private ArrayList<String> books = new ArrayList<>();
+        private boolean connectable;
+        private int myNumber;
 
         public PlaceholderFragment(int sectionNumber) {
             Bundle args = new Bundle();
@@ -200,38 +204,48 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             setArguments(args);
         }
 
-        public PlaceholderFragment() {
+        public PlaceholderFragment() {}
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            if (myNumber != 1) return;
+
+            // Retain this fragment across configuration changes.
+            setRetainInstance(true);
+
+            arrayAdapter = new ArrayAdapter(
+                    getActivity(),
+                    android.R.layout.simple_list_item_1,
+                    books);
+            // Create and execute the background task.
+            //mTask = new DummyTask();
+            //mTask.execute();
+
+            connectable = LibConn.isConnectable();
+            Element elm = connectable ?
+                DataIO.refreshStoredData(getActivity()) :
+                DataIO.getStoredData(getActivity());
+
+            for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
+                books.add(book.get("title") + "\n" + book.get("dueDate"));
+            }
+
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            int myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
 
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
 
             if (myNumber == 1) {
-                boolean connectable = LibConn.isConnectable();
                 String msg = connectable ? "connecting" : "No connection";
                 Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
                 toast.show();
 
-                Element elm = connectable ?
-                    DataIO.refreshStoredData(getActivity()) :
-                    DataIO.getStoredData(getActivity());
-
-                ArrayList<String> books = new ArrayList<>();
-                for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
-                    books.add(book.get("title") + "\n" + book.get("dueDate"));
-                }
-
-                // Second param is the resource Id for list layout row item
-                // Third param is input array 
-                ArrayAdapter arrayAdapter = new ArrayAdapter(
-                        getActivity(),
-                        android.R.layout.simple_list_item_1,
-                        books);
                 lv.setAdapter(arrayAdapter);
             } else if (myNumber == 2) {
             }

@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        scheduleNotification(3);
+        if (savedInstanceState == null) { scheduleNotification(3); }
     }
 
     private void scheduleNotification(int delaySec) {

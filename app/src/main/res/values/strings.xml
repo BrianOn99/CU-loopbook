@@ -7,4 +7,7 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="action_settings">Settings</string>
+    <string name="setting_confirm">OK</string>
+    <string name="hint_id">userId (1155032703)</string>
+    <string name="hint_passwd">password (19990101)</string>
 </resources>

@@ -126,8 +126,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "WOW", Toast.LENGTH_LONG).show();
+            Intent myIntent = new Intent(this, Setting.class);
+            startActivity(myIntent);
             return true;
         }
 

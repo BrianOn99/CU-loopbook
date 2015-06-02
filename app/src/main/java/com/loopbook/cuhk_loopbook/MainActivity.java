@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.os.AsyncTask;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -195,8 +196,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayAdapter arrayAdapter;
         private ArrayList<String> books = new ArrayList<>();
-        private boolean connectable;
+        private boolean connectable = false;
         private int myNumber;
+
+        private class AsyncBookLoader extends AsyncTask<Void, Void, ArrayList<String>> {
+            @Override
+            protected ArrayList<String> doInBackground(Void... nothing) {
+                Element elm = connectable ?
+                    DataIO.refreshStoredData(getActivity()) :
+                    DataIO.getStoredData(getActivity());
+
+                for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
+                    books.add(book.get("title") + "\n" + book.get("dueDate"));
+                }
+
+                return books;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<String> result) {
+                arrayAdapter.notifyDataSetChanged();
+            }
+        }
 
         public PlaceholderFragment(int sectionNumber) {
             Bundle args = new Bundle();
@@ -215,23 +236,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // Retain this fragment across configuration changes.
             setRetainInstance(true);
 
+            connectable = LibConn.isConnectable();
+            String msg = connectable ? "connecting" : "No connection";
+            Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
+            toast.show();
+
             arrayAdapter = new ArrayAdapter(
                     getActivity(),
                     android.R.layout.simple_list_item_1,
                     books);
+
             // Create and execute the background task.
-            //mTask = new DummyTask();
-            //mTask.execute();
-
-            connectable = LibConn.isConnectable();
-            Element elm = connectable ?
-                DataIO.refreshStoredData(getActivity()) :
-                DataIO.getStoredData(getActivity());
-
-            for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
-                books.add(book.get("title") + "\n" + book.get("dueDate"));
-            }
-
+            AsyncBookLoader bookLoader = new AsyncBookLoader();
+            bookLoader.execute();
         }
 
         @Override
@@ -242,10 +259,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
 
             if (myNumber == 1) {
-                String msg = connectable ? "connecting" : "No connection";
-                Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
-                toast.show();
-
                 lv.setAdapter(arrayAdapter);
             } else if (myNumber == 2) {
             }

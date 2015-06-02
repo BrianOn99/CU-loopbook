@@ -163,7 +163,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return new PlaceholderFragment(position + 1);
+            if (position == 0) { return new PlaceholderFragment(); }
+            else if (position == 1) { return new CatalogFragment(); }
+            else { throw new RuntimeException("Unknown tab number"); }
         }
 
         @Override
@@ -185,19 +187,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
+    public static class CatalogFragment extends Fragment {
+        public CatalogFragment() {};
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            return rootView;
+        }
+    }
+
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayAdapter arrayAdapter;
         private ArrayList<String> books = new ArrayList<>();
         private boolean connectable = false;
-        private int myNumber;
 
         private class AsyncBookLoader extends AsyncTask<Void, Void, ArrayList<String>> {
             @Override
@@ -219,19 +225,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         }
 
-        public PlaceholderFragment(int sectionNumber) {
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            setArguments(args);
-        }
-
         public PlaceholderFragment() {}
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            myNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            if (myNumber != 1) return;
 
             // Retain this fragment across configuration changes.
             setRetainInstance(true);
@@ -257,11 +255,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             ListView lv = (ListView) rootView.findViewById(R.id.book_list);
-
-            if (myNumber == 1) {
-                lv.setAdapter(arrayAdapter);
-            } else if (myNumber == 2) {
-            }
+            lv.setAdapter(arrayAdapter);
 
             return rootView;
         }

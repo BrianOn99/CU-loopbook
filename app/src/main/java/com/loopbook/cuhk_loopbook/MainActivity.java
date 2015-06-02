@@ -241,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             arrayAdapter = new ArrayAdapter(
                     getActivity(),
-                    android.R.layout.simple_list_item_1,
+                    R.layout.list_item,
                     books);
 
             // Create and execute the background task.

@@ -21,6 +21,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.os.AsyncTask;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import org.apache.http.util.EncodingUtils;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -131,16 +136,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Toast.makeText(this, "WOW", Toast.LENGTH_LONG).show();
-            Intent myIntent = new Intent(this, Setting.class);
-            startActivity(myIntent);
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent myIntent = new Intent(this, Setting.class);
+                startActivity(myIntent);
+                break;
+            case R.id.action_login:
+                CatalogFragment.login(this);
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -148,6 +154,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
+        switch (tab.getPosition()) {
+            case 0:
+                break;
+            case 1:
+                break;
+        }
     }
 
     @Override
@@ -197,13 +209,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public static class CatalogFragment extends Fragment {
+        public static WebView currentView = null;
         public CatalogFragment() {};
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
+            WebView myWebView = (WebView) inflater.inflate(R.layout.fragment_catalog, container, false);
+            myWebView.setWebViewClient(new WebViewClient());
+            currentView = myWebView;
+            login(getActivity());
+
+            return myWebView;
+        }
+
+        public static void login(Context c) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            String user_id = prefs.getString("user_id", "");
+            String user_passwd = prefs.getString("user_passwd", "");
+            String url = "https://m.library.cuhk.edu.hk/patroninfo";
+
+            String postData = String.format("code=%s&pin=%s", user_id, user_passwd);
+            currentView.postUrl(url, EncodingUtils.getBytes(postData, "BASE64"));
         }
     }
 
@@ -268,8 +295,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     books);
 
             // Create and execute the background task.
-            AsyncBookLoader bookLoader = new AsyncBookLoader();
-            bookLoader.execute();
+            // AsyncBookLoader bookLoader = new AsyncBookLoader();
+            // bookLoader.execute();
         }
 
         @Override

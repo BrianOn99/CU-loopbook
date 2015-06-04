@@ -4,4 +4,6 @@
     <item android:id="@+id/action_settings" android:title="@string/menu_setting_label"
         android:icon="@drawable/ic_menu_login"
         android:orderInCategory="100" app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_login" android:title="@string/menu_login"
+        android:orderInCategory="100" app:showAsAction="ifRoom" />
 </menu>

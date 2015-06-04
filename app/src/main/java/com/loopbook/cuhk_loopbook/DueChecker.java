@@ -17,9 +17,14 @@ public class DueChecker extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         boolean connectable = LibConn.isConnectable();
-        Element elm = connectable ?
-            DataIO.refreshStoredData(context) :
-            DataIO.getStoredData(context);
+        Element elm = null;
+        try {
+            elm = connectable ?
+                DataIO.refreshStoredData(context) :
+                DataIO.getStoredData(context);
+        } catch (RuntimeException e) {
+            return;
+        }
 
         SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy");
         Calendar DaysLater = Calendar.getInstance();

@@ -44,10 +44,19 @@ public class LibConn {
             throw new RuntimeException("Failed connection", e); 
         }
 
+        Elements succElm = doc.getElementsByClass("loggedInMessage");
+        if (succElm.size() == 0) {
+            throw new RuntimeException("Failed login");
+        }
+
         //Element name = doc.select("strong").first();
-        Element bookListLink = doc.select(".patroninfoList a").first();
-        this.bookhref = bookListLink.attr("abs:href");
-        this.cookies = resp.cookies();
+        try {
+            Element bookListLink = doc.select(".patroninfoList a").first();
+            this.bookhref = bookListLink.attr("abs:href");
+            this.cookies = resp.cookies();
+        } catch(Exception e) {
+            throw new RuntimeException("Cannnot get books after login", e);
+        }
     }
 
     public Element getBooksElement() {

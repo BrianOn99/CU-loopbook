@@ -208,11 +208,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private boolean connectable = false;
 
         private class AsyncBookLoader extends AsyncTask<Void, Void, ArrayList<String>> {
+            private Exception caughtException = null;
+
             @Override
             protected ArrayList<String> doInBackground(Void... nothing) {
-                Element elm = connectable ?
-                    DataIO.refreshStoredData(getActivity()) :
-                    DataIO.getStoredData(getActivity());
+                Element elm;
+                try {
+                    elm = connectable ?
+                        DataIO.refreshStoredData(getActivity()) :
+                        DataIO.getStoredData(getActivity());
+                } catch (RuntimeException e) {
+                    caughtException = e;
+                    return null;
+                }
 
                 for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
                     books.add(book.get("title") + "\n" + book.get("dueDate"));
@@ -223,7 +231,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             @Override
             protected void onPostExecute(ArrayList<String> result) {
-                arrayAdapter.notifyDataSetChanged();
+                if (caughtException != null) {
+                    Toast.makeText(getActivity(),
+                                   caughtException.getMessage(),
+                                   Toast.LENGTH_LONG).show();
+                } else {
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
         }
 

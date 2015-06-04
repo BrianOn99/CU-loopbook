@@ -89,27 +89,34 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        if (savedInstanceState == null) { scheduleNotification(3); }
+        if (savedInstanceState == null) { scheduleNotification(); }
     }
 
-    private void scheduleNotification(int delaySec) {
+    private void scheduleNotification() {
+        int delaySec = 5;
         Intent notificationIntent = new Intent(this, DueChecker.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
             this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
         AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
 
-        // Set the alarm to start at approximately 2:00 p.m.
-        /*
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
+        if (BuildInfo.DEBUG) {
+            Toast.makeText(this, "schdule in DEBUG mode", Toast.LENGTH_LONG).show();
+            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        } else {
+            Toast.makeText(this, "schdule in RELEASE mode", Toast.LENGTH_LONG).show();
 
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                                     AlarmManager.INTERVAL_DAY, pendingIntent);
-         */
+            // Set the alarm to start at approximately ?:??.
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 15);
+            calendar.set(Calendar.MINUTE, 36);
+
+            alarmMgr.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_HALF_DAY, pendingIntent);
+        }
     }
 
     @Override

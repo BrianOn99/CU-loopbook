@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <EditTextPreference
+         android:key="user_id"
+         android:title="@string/pref_id_label"
+         android:hint="@string/hint_id" />
+     <EditTextPreference
+         android:key="user_passwd"
+         android:title="@string/pref_passwd_label"
+         android:hint="@string/hint_passwd" />
+</PreferenceScreen>

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.Jsoup; 
@@ -15,7 +17,10 @@ public class DataIO {
     static String filename = "books.html";
 
     public static Element refreshStoredData(Context c) {
-        LibConn myLib = new LibConn("1155032703", "19940122");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        String user_id = prefs.getString("user_id", "");
+        String user_passwd = prefs.getString("user_passwd", "");
+        LibConn myLib = new LibConn(user_id, user_passwd);
         myLib.login();
         Element elm = myLib.getBooksElement();
 

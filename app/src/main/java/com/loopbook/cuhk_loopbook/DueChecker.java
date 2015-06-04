@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 
 public class DueChecker extends BroadcastReceiver {
     public static int notifyId = 1;
+    public static int day_threshold = BuildInfo.DEBUG ? 20 : 2;
 
     public void onReceive(Context context, Intent intent) {
         boolean connectable = LibConn.isConnectable();
@@ -28,7 +29,7 @@ public class DueChecker extends BroadcastReceiver {
 
         SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy");
         Calendar DaysLater = Calendar.getInstance();
-        DaysLater.add(Calendar.DATE, 20);
+        DaysLater.add(Calendar.DATE, day_threshold);
 
         for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
             String title = book.get("title");

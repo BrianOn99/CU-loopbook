@@ -295,8 +295,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     books);
 
             // Create and execute the background task.
-            // AsyncBookLoader bookLoader = new AsyncBookLoader();
-            // bookLoader.execute();
+            AsyncBookLoader bookLoader = new AsyncBookLoader();
+            bookLoader.execute();
         }
 
         @Override

@@ -27,10 +27,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import org.apache.http.util.EncodingUtils;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent; 
-import android.os.SystemClock;
 import android.content.Context;
 
 import com.loopbook.cuhk_loopbook.LibConn;
@@ -94,34 +91,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        if (savedInstanceState == null) { scheduleNotification(); }
-    }
-
-    private void scheduleNotification() {
-        int delaySec = 5;
-        Intent notificationIntent = new Intent(this, DueChecker.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
-        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-        if (BuildInfo.DEBUG) {
-            Toast.makeText(this, "schdule in DEBUG mode", Toast.LENGTH_LONG).show();
-            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-        } else {
-            Toast.makeText(this, "schdule in RELEASE mode", Toast.LENGTH_LONG).show();
-
-            // Set the alarm to start at approximately ?:??.
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 15);
-            calendar.set(Calendar.MINUTE, 36);
-
-            alarmMgr.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_HALF_DAY, pendingIntent);
-        }
+        if (savedInstanceState == null) { CheckSched.scheduleNotification(this); }
     }
 
     @Override

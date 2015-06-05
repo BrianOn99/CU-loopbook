@@ -239,18 +239,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayAdapter arrayAdapter;
         private ArrayList<String> books = new ArrayList<>();
-        private boolean connectable = false;
 
-        private class AsyncBookLoader extends AsyncTask<Void, Void, ArrayList<String>> {
+        private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<String>> {
             private Exception caughtException = null;
+            private Context context;
 
             @Override
-            protected ArrayList<String> doInBackground(Void... nothing) {
+            protected ArrayList<String> doInBackground(Context... context) {
                 Element elm;
                 try {
+                    this.context = context[0];
+                    boolean connectable = LibConn.isConnectable();
+                    String msg = connectable ? "connecting" : "No connection";
+                    publishProgress(msg);
                     elm = connectable ?
-                        DataIO.refreshStoredData(getActivity()) :
-                        DataIO.getStoredData(getActivity());
+                        DataIO.refreshStoredData(this.context) :
+                        DataIO.getStoredData(this.context);
                 } catch (RuntimeException e) {
                     caughtException = e;
                     return null;
@@ -261,6 +265,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
 
                 return books;
+            }
+
+            @Override
+            protected void onProgressUpdate(String... msgs) {
+                Toast.makeText(this.context, msgs[0], Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -284,11 +293,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // Retain this fragment across configuration changes.
             setRetainInstance(true);
 
-            connectable = LibConn.isConnectable();
-            String msg = connectable ? "connecting" : "No connection";
-            Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG);
-            toast.show();
-
             arrayAdapter = new ArrayAdapter(
                     getActivity(),
                     R.layout.list_item,
@@ -296,7 +300,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             // Create and execute the background task.
             AsyncBookLoader bookLoader = new AsyncBookLoader();
-            bookLoader.execute();
+            bookLoader.execute(getActivity());
         }
 
         @Override

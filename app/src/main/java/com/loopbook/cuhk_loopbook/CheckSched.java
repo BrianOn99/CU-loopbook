@@ -14,14 +14,15 @@ public class CheckSched {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmMgr = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
+        Calendar calendar = Calendar.getInstance();
 
         if (BuildInfo.DEBUG) {
-            int delaySec = 5;
-            long futureInMillis = SystemClock.elapsedRealtime() + delaySec * 1000;
-            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+            calendar.setTimeInMillis(System.currentTimeMillis() + 5000);
+            alarmMgr.setInexactRepeating(
+                    AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
         } else {
             // Set the alarm to start at approximately ?:??.
-            Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 15);
             calendar.set(Calendar.MINUTE, 36);

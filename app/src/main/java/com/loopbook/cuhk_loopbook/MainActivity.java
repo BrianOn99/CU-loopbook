@@ -91,7 +91,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        if (savedInstanceState == null) { CheckSched.scheduleNotification(this); }
+        if (savedInstanceState == null && isFirstRun()) {
+            if (BuildInfo.DEBUG)
+                Toast.makeText(this, "firstrun", Toast.LENGTH_LONG).show();
+            setRunned();
+            CheckSched.scheduleNotification(this);
+        }
+    }
+
+    public boolean isFirstRun() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("firstrun", true);
+    }
+
+    public void setRunned() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("firstrun", false);
+        editor.commit();
     }
 
     @Override

@@ -145,12 +145,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case 0:
                 break;
             case 1:
+                View button = findViewById(R.id.action_login);
+                button.setVisibility(View.VISIBLE);
                 break;
         }
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        switch (tab.getPosition()) {
+            case 0:
+                break;
+            case 1:
+                View button = findViewById(R.id.action_login);
+                button.setVisibility(View.GONE);
+                break;
+        }
     }
 
     @Override

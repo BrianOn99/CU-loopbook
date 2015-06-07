@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.widget.Toast;
 import android.content.Context;
 
+import android.util.Log;
+
 public class CheckSched {
     public static void scheduleNotification(Context context) {
         Intent notificationIntent = new Intent(context, DueChecker.class);
@@ -17,11 +19,13 @@ public class CheckSched {
         Calendar calendar = Calendar.getInstance();
 
         if (BuildInfo.DEBUG) {
+            Log.e("CheckSched", "scheduling in debugmode");
             calendar.setTimeInMillis(System.currentTimeMillis() + 5000);
             alarmMgr.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
         } else {
+            Log.e("CheckSched", "scheduling in releasemode");
             // Set the alarm to start at approximately ?:??.
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, 15);

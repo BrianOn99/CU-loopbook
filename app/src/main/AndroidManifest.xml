@@ -28,7 +28,9 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <receiver android:name=".DueChecker" />
+        <receiver android:name=".DueChecker"
+                 android:permission="android.permission.INTERNET"
+                 />
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import org.jsoup.Connection;
 import java.util.*;
 import java.net.InetAddress;
 
+import android.util.Log;
 
 public class LibConn {
     private final String name;
@@ -23,8 +24,10 @@ public class LibConn {
     public static boolean isConnectable() {
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
+            Log.e("Libconn", "connectable");
             return !ipAddr.equals("");
         } catch (Exception e) {
+            Log.e("Libconn", "unconnectable");
             return false;
         }
 
@@ -40,7 +43,8 @@ public class LibConn {
         try {
             resp = conn.execute();
             doc = resp.parse();
-        } catch(Exception e) { 
+        } catch(java.io.IOException e) { 
+            Log.e("Libconn", "IOException");
             throw new RuntimeException("Failed connection", e); 
         }
 
@@ -50,13 +54,13 @@ public class LibConn {
         }
 
         //Element name = doc.select("strong").first();
-        try {
-            Element bookListLink = doc.select(".patroninfoList a").first();
-            this.bookhref = bookListLink.attr("abs:href");
-            this.cookies = resp.cookies();
-        } catch(Exception e) {
-            throw new RuntimeException("Cannnot get books after login", e);
-        }
+        Element bookListLink = doc.select(".patroninfoList a").first();
+        if (bookListLink == null)
+            throw new RuntimeException("Cannnot get books after login");
+        this.bookhref = bookListLink.attr("abs:href");
+        if (this.bookhref == "")
+            throw new RuntimeException("Cannnot get books after login");
+        this.cookies = resp.cookies();
     }
 
     public Element getBooksElement() {

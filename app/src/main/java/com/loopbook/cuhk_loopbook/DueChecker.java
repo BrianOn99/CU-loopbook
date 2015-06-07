@@ -28,17 +28,22 @@ public class DueChecker extends BroadcastReceiver {
             Element elm;
             this.context = context[0];
             boolean connectable = LibConn.isConnectable();
-            elm = connectable ?
-                DataIO.refreshStoredData(this.context) :
-                DataIO.getStoredData(this.context);
-
-            return elm;
+            try {
+                elm = connectable ?
+                    DataIO.refreshStoredData(this.context) :
+                    DataIO.getStoredData(this.context);
+                return elm;
+            } catch (RuntimeException e) {
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(Element elm) {
-            Log.e("DueChecker", "postexecute");
-            DueChecker.checker(context, elm);
+            if (elm != null) {
+                Log.e("DueChecker", "postexecute");
+                DueChecker.checker(context, elm);
+            }
         }
     }
 

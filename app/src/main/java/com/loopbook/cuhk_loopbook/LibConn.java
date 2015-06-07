@@ -40,13 +40,25 @@ public class LibConn {
         Connection.Response resp;
         Document doc;
 
-        try {
-            resp = conn.execute();
-            doc = resp.parse();
-        } catch(java.io.IOException e) { 
-            Log.e("Libconn", "IOException");
-            throw new RuntimeException("Failed connection", e); 
+        /*
+         * There is a weird bug in Android2.2 (not exist in Android4.4):
+         * If this function is invoked in alarmanager, conn.execute() will
+         * success and fail alternately (tested in wifi connection). In main
+         * thread, there is no such problem. So, try more than once.
+         */
+        int trial = 3;
+        while (true) {
+            try {
+                resp = conn.execute();
+                doc = resp.parse();
+                break;
+            } catch(java.io.IOException e) {
+                Log.e("Libconn", "IOException "+e.getMessage());
+                if (--trial < 1)
+                    throw new RuntimeException("Failed connection", e);
+            }
         }
+        Log.e("Libconn", "HTTP and parse ok");
 
         Elements succElm = doc.getElementsByClass("loggedInMessage");
         if (succElm.size() == 0) {

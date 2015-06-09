@@ -30,8 +30,6 @@ import org.apache.http.util.EncodingUtils;
 import android.content.Intent; 
 import android.content.Context;
 
-import com.loopbook.cuhk_loopbook.LibConn;
-import com.loopbook.cuhk_loopbook.DataIO;
 import org.jsoup.nodes.Element;
 
 

@@ -17,14 +17,14 @@ public class DataIO {
     static String filename = "books.html";
 
     public static Element getData(Context context)
-                          throws java.io.IOException, java.text.ParseException {
+                          throws IOException, java.text.ParseException {
         return LibConn.isConnectable() ?
             refreshStoredData(context) :
             getStoredData(context);
     }
 
     public static Element refreshStoredData(Context c) 
-                          throws java.io.IOException, java.text.ParseException {
+                          throws IOException, java.text.ParseException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String user_id = prefs.getString("user_id", "");
         String user_passwd = prefs.getString("user_passwd", "");

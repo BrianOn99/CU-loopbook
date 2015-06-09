@@ -209,6 +209,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             WebView myWebView = (WebView) inflater.inflate(R.layout.fragment_catalog, container, false);
             myWebView.setWebViewClient(new WebViewClient());
+            myWebView.getSettings().setJavaScriptEnabled(true);
             currentView = myWebView;
             login(getActivity());
 

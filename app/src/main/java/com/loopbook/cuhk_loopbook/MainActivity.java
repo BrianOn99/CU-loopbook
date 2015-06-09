@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         if (savedInstanceState == null && isFirstRun()) {
             if (BuildInfo.DEBUG)
-                Toast.makeText(this, "firstrun", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "firstrun", Toast.LENGTH_SHORT).show();
             setRunned();
             CheckSched.scheduleNotification(this);
         }
@@ -135,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 CatalogFragment.login(this);
                 break;
             case R.id.action_refresh:
-                PlaceholderFragment.getInstance().refresh();
+                BookFragment.getInstance().refresh();
                 break;
         }
         return true;
@@ -175,8 +175,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 0) { return new PlaceholderFragment(); }
+            // Return a fragment (defined as a static inner class below).
+            if (position == 0) { return new BookFragment(); }
             else if (position == 1) { return new CatalogFragment(); }
             else { throw new RuntimeException("Unknown tab number"); }
         }
@@ -227,19 +227,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public static class PlaceholderFragment extends Fragment {
+    public static class BookFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayAdapter arrayAdapter;
         private ArrayList<String> books = new ArrayList<>();
-        private static PlaceholderFragment instance;
+        private static BookFragment instance;
 
-        public PlaceholderFragment() {
+        public BookFragment() {
             super();
             instance = this;
         }
 
-        public static PlaceholderFragment getInstance() {
+        public static BookFragment getInstance() {
             return instance;
         }
 
@@ -250,15 +250,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             @Override
             protected ArrayList<String> doInBackground(Context... context) {
                 Element elm;
+                this.context = context[0];
+                String msg = LibConn.isConnectable() ? "connecting" : "No connection";
+                publishProgress(msg);
                 try {
-                    this.context = context[0];
-                    boolean connectable = LibConn.isConnectable();
-                    String msg = connectable ? "connecting" : "No connection";
-                    publishProgress(msg);
-                    elm = connectable ?
-                        DataIO.refreshStoredData(this.context) :
-                        DataIO.getStoredData(this.context);
-                } catch (RuntimeException e) {
+                    elm = DataIO.getData(this.context);
+                } catch (java.io.IOException | java.text.ParseException e) {
                     caughtException = e;
                     return null;
                 }
@@ -272,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
             @Override
             protected void onProgressUpdate(String... msgs) {
-                Toast.makeText(this.context, msgs[0], Toast.LENGTH_LONG).show();
+                Toast.makeText(this.context, msgs[0], Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -280,7 +277,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 if (caughtException != null) {
                     Toast.makeText(getActivity(),
                                    caughtException.getMessage(),
-                                   Toast.LENGTH_LONG).show();
+                                   Toast.LENGTH_SHORT).show();
                 } else {
                     arrayAdapter.notifyDataSetChanged();
                 }
@@ -303,9 +300,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     getActivity(),
                     R.layout.list_item,
                     books);
-
-            // Create and execute the background task.
-            refresh();
         }
 
         @Override

@@ -33,7 +33,7 @@ public class LibConn {
 
     }
 
-    public void login() {
+    public void login() throws java.io.IOException, java.text.ParseException {
         Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
                                .data("code", this.name, "pin", this.passwd)
                                .method(Connection.Method.POST);
@@ -46,41 +46,40 @@ public class LibConn {
          * success and fail alternately (tested in wifi connection). In main
          * thread, there is no such problem. So, try more than once.
          */
-        int trial = 3;
-        while (true) {
+        for (int trial=3;; trial--) {
             try {
                 resp = conn.execute();
                 doc = resp.parse();
                 break;
             } catch(java.io.IOException e) {
                 Log.e("Libconn", "IOException "+e.getMessage());
-                if (--trial < 1)
-                    throw new RuntimeException("Failed connection", e);
+                if (trial < 1)
+                    throw new java.io.IOException("Failed connection", e);
             }
         }
         Log.e("Libconn", "HTTP and parse ok");
 
         Elements succElm = doc.getElementsByClass("loggedInMessage");
         if (succElm.size() == 0) {
-            throw new RuntimeException("Failed login");
+            throw new java.text.ParseException("Failed login", 0);
         }
 
         //Element name = doc.select("strong").first();
         Element bookListLink = doc.select(".patroninfoList a").first();
-        if (bookListLink == null)
-            throw new RuntimeException("Cannnot get books after login");
-        this.bookhref = bookListLink.attr("abs:href");
-        if (this.bookhref == "")
-            throw new RuntimeException("Cannnot get books after login");
+
+        if (bookListLink != null)
+            this.bookhref = bookListLink.attr("abs:href");
+        if (bookListLink == null || this.bookhref == "")
+            throw new java.text.ParseException("Cannnot get books after login", 0);
         this.cookies = resp.cookies();
     }
 
-    public Element getBooksElement() {
+    public Element getBooksElement() throws java.io.IOException {
         Document doc;
         try {
             doc = Jsoup.connect(this.bookhref).cookies(this.cookies).get();
         } catch(Exception e) { 
-            throw new RuntimeException("Failed connection", e); 
+            throw new java.io.IOException("Failed connection", e); 
         }
 
         Element table = doc.select("table.patFunc").first();
@@ -103,11 +102,7 @@ public class LibConn {
         return bookList;
     }
 
-    public ArrayList<Map<String, String>> getBooks() {
+    public ArrayList<Map<String, String>> getBooks() throws java.io.IOException {
         return getBooksFromElement(getBooksElement());
-    }
-
-    public String getBooksHtml() {
-        return getBooksElement().outerHtml();
     }
 }

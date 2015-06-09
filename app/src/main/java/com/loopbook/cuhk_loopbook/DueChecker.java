@@ -19,7 +19,6 @@ public class DueChecker extends BroadcastReceiver {
     public static int day_threshold = BuildInfo.DEBUG ? 20 : 2;
 
     private class AsyncBookLoader extends AsyncTask<Context, Void, Element> {
-        private Exception caughtException = null;
         private Context context;
 
         @Override
@@ -29,11 +28,8 @@ public class DueChecker extends BroadcastReceiver {
             this.context = context[0];
             boolean connectable = LibConn.isConnectable();
             try {
-                elm = connectable ?
-                    DataIO.refreshStoredData(this.context) :
-                    DataIO.getStoredData(this.context);
-                return elm;
-            } catch (RuntimeException e) {
+                return DataIO.getData(this.context);
+            } catch (java.io.IOException | java.text.ParseException e) {
                 return null;
             }
         }

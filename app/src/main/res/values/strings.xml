@@ -9,6 +9,7 @@
 
     <string name="menu_setting_label">setting</string>
     <string name="menu_login">login</string>
+    <string name="menu_refresh">refresh</string>
 
     <string name="pref_id_label">User ID</string>
     <string name="hint_id">e.g. 1155032703</string>

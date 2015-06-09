@@ -51,6 +51,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+    Menu myMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        myMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -132,35 +134,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case R.id.action_login:
                 CatalogFragment.login(this);
                 break;
+            case R.id.action_refresh:
+                PlaceholderFragment.getInstance().refresh();
+                break;
         }
         return true;
     }
 
+    private int iconIdOfTab(ActionBar.Tab tab) {
+        int pos = tab.getPosition();
+        return (pos == 0) ? R.id.action_refresh :
+               (pos == 1) ? R.id.action_login : 0;
+    }
+
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
-        switch (tab.getPosition()) {
-            case 0:
-                break;
-            case 1:
-                View button = findViewById(R.id.action_login);
-                button.setVisibility(View.VISIBLE);
-                break;
-        }
+        if (myMenu != null) myMenu.findItem(iconIdOfTab(tab)).setVisible(true);
     }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        switch (tab.getPosition()) {
-            case 0:
-                break;
-            case 1:
-                View button = findViewById(R.id.action_login);
-                button.setVisibility(View.GONE);
-                break;
-        }
+        if (myMenu != null) myMenu.findItem(iconIdOfTab(tab)).setVisible(false);
     }
 
     @Override
@@ -236,6 +231,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private static final String ARG_SECTION_NUMBER = "section_number";
         private ArrayAdapter arrayAdapter;
         private ArrayList<String> books = new ArrayList<>();
+        private static PlaceholderFragment instance;
+
+        public PlaceholderFragment() {
+            super();
+            instance = this;
+        }
+
+        public static PlaceholderFragment getInstance() {
+            return instance;
+        }
 
         private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<String>> {
             private Exception caughtException = null;
@@ -280,8 +285,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             }
         }
-
-        public PlaceholderFragment() {}
+        
+        public void refresh() {
+            AsyncBookLoader bookLoader = new AsyncBookLoader();
+            bookLoader.execute(getActivity());
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -296,8 +304,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     books);
 
             // Create and execute the background task.
-            AsyncBookLoader bookLoader = new AsyncBookLoader();
-            bookLoader.execute(getActivity());
+            refresh();
         }
 
         @Override

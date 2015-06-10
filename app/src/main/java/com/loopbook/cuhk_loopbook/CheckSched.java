@@ -5,10 +5,15 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent; 
 import android.content.Context;
+import android.content.BroadcastReceiver;
 
 import android.util.Log;
 
-public class CheckSched {
+public class CheckSched extends BroadcastReceiver {
+    public void onReceive(Context context, Intent intent) {
+        scheduleNotification(context);
+    }
+
     public static void scheduleNotification(Context context) {
         Intent notificationIntent = new Intent(context, DueChecker.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(

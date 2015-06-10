@@ -29,11 +29,14 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <receiver android:name=".DueChecker"
-                  android:permission="android.permission.INTERNET">
+        <receiver android:name=".CheckSched">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
+        </receiver>
+
+        <receiver android:name=".DueChecker"
+                  android:permission="android.permission.INTERNET">
         </receiver>
 
     </application>

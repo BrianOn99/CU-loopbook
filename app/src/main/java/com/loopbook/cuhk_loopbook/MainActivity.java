@@ -209,7 +209,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             myWebView.setWebViewClient(new WebViewClient());
             myWebView.getSettings().setJavaScriptEnabled(true);
             currentView = myWebView;
-            login(getActivity());
 
             return myWebView;
         }
@@ -258,6 +257,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return null;
                 }
 
+                books.clear();
                 for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
                     books.add(book.get("title") + "\n" + book.get("dueDate"));
                 }
@@ -298,6 +298,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     getActivity(),
                     R.layout.list_item,
                     books);
+            refresh();
         }
 
         @Override

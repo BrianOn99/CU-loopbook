@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.graphics.BitmapFactory;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ public class DueChecker extends BroadcastReceiver {
             Log.e("DueChecker", "doingInbackground");
             Element elm;
             this.context = context[0];
-            boolean connectable = LibConn.isConnectable();
+            boolean connectable = LibConn.isConnectable(context[0]);
             try {
                 return DataIO.getData(this.context);
             } catch (java.io.IOException | java.text.ParseException e) {
@@ -55,7 +56,7 @@ public class DueChecker extends BroadcastReceiver {
         DaysLater.add(Calendar.DATE, day_threshold);
 
         for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
-            String title = book.get("title");
+            String bookTitle = book.get("title");
             String date = book.get("dueDate");
             Calendar dueDate = Calendar.getInstance();
             try {
@@ -64,24 +65,30 @@ public class DueChecker extends BroadcastReceiver {
             }
 
             if (DaysLater.compareTo(dueDate) > 0) {
+                int diff = dueDate.get(Calendar.DAY_OF_YEAR) -
+                           Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+                String title = String.format("Book due after %d days", diff);
                 NotificationManager nManager = (NotificationManager)context
                     .getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationCompat.Builder builder = getNotification(context, title);
+                NotificationCompat.Builder builder = getNotification(context, title, bookTitle);
                 nManager.notify(notifyId++, builder.build());
             }
         }
     }
 
-    public static NotificationCompat.Builder getNotification(Context context, String content) {
+    public static NotificationCompat.Builder getNotification(
+            Context context, String title, String content) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle("Book going to expire");
+        builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setLargeIcon(BitmapFactory.decodeResource(
+                    context.getResources(), R.drawable.ic_stat_action_schedule));
 
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
                 0,
-                new Intent(),
+                new Intent(context, MainActivity.class).putExtra("renew", content),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(contentIntent);
 

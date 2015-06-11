@@ -8,7 +8,10 @@ import org.jsoup.Connection;
 import java.util.*;
 import java.net.InetAddress;
 
+import android.content.Context;
 import android.util.Log;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 public class LibConn {
     private final String name;
@@ -21,16 +24,14 @@ public class LibConn {
         this.passwd = passwd;
     }
 
-    public static boolean isConnectable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            Log.e("Libconn", "connectable");
-            return !ipAddr.equals("");
-        } catch (Exception e) {
-            Log.e("Libconn", "unconnectable");
-            return false;
-        }
-
+    public static boolean isConnectable(Context context) {
+        ConnectivityManager cm =
+            (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        boolean connectable =  netInfo != null && netInfo.isConnectedOrConnecting();
+        if (connectable) Log.e("Libconn", "connectable");
+        else Log.e("Libconn", "unconnectable");
+        return connectable;
     }
 
     public void login() throws java.io.IOException, java.text.ParseException {
@@ -54,7 +55,7 @@ public class LibConn {
             } catch(java.io.IOException e) {
                 Log.e("Libconn", "IOException "+e.getMessage());
                 if (trial < 1)
-                    throw new java.io.IOException("Failed connection", e);
+                    throw new java.io.IOException("Failed connection");
             }
         }
         Log.e("Libconn", "HTTP and parse ok");
@@ -79,7 +80,7 @@ public class LibConn {
         try {
             doc = Jsoup.connect(this.bookhref).cookies(this.cookies).get();
         } catch(Exception e) { 
-            throw new java.io.IOException("Failed connection", e); 
+            throw new java.io.IOException("Failed connection"); 
         }
 
         Element table = doc.select("table.patFunc").first();

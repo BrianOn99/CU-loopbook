@@ -50,17 +50,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
     Menu myMenu;
+    private boolean renew = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().getStringExtra("renew") != null) { renew = true; }
+
         setContentView(R.layout.activity_main);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        // Create the adapter that will return a fragment for each of the three
+        // Create the adapter that will return a fragment for each of the 2
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -80,14 +84,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
+        }
+
+        if (renew) {
+            actionBar.selectTab(actionBar.getTabAt(1));
         }
 
         if (savedInstanceState == null && isFirstRun()) {
@@ -130,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 startActivity(myIntent);
                 break;
             case R.id.action_login:
-                CatalogFragment.login(this);
+                CatalogFragment.getInstance().login(this);
                 break;
             case R.id.action_refresh:
                 BookFragment.getInstance().refresh();
@@ -175,7 +179,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // getItem is called to instantiate the fragment for the given page.
             // Return a fragment (defined as a static inner class below).
             if (position == 0) { return new BookFragment(); }
-            else if (position == 1) { return new CatalogFragment(); }
+            else if (position == 1) { return CatalogFragment.createInstance(renew); }
             else { throw new RuntimeException("Unknown tab number"); }
         }
 
@@ -199,8 +203,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public static class CatalogFragment extends Fragment {
-        public static WebView currentView = null;
+        private WebView currentView = null;
+        private boolean loginOnStart;
+        private static CatalogFragment singleton = null;
         public CatalogFragment() {};
+
+        public static CatalogFragment createInstance(boolean loginOnStart) {
+            CatalogFragment newInstance = new CatalogFragment();
+            newInstance.loginOnStart = loginOnStart;
+            singleton = newInstance;
+            return newInstance;
+        }
+
+        public static CatalogFragment getInstance() { return singleton; }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -209,11 +225,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             myWebView.setWebViewClient(new WebViewClient());
             myWebView.getSettings().setJavaScriptEnabled(true);
             currentView = myWebView;
+            if (loginOnStart) {
+                login(getActivity());
+            } else {
+            }
 
             return myWebView;
         }
 
-        public static void login(Context c) {
+        public void login(Context c) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             String user_id = prefs.getString("user_id", "");
             String user_passwd = prefs.getString("user_passwd", "");
@@ -248,7 +268,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             protected ArrayList<String> doInBackground(Context... context) {
                 Element elm;
                 this.context = context[0];
-                String msg = LibConn.isConnectable() ? "connecting" : "No connection";
+                String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
                 publishProgress(msg);
                 try {
                     elm = DataIO.getData(this.context);

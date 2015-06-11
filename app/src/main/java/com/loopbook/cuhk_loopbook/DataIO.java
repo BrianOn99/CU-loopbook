@@ -18,7 +18,7 @@ public class DataIO {
 
     public static Element getData(Context context)
                           throws IOException, java.text.ParseException {
-        return LibConn.isConnectable() ?
+        return LibConn.isConnectable(context) ?
             refreshStoredData(context) :
             getStoredData(context);
     }

@@ -26,13 +26,12 @@ public class CheckSched extends BroadcastReceiver {
             calendar.setTimeInMillis(System.currentTimeMillis() + 5000);
             alarmMgr.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES/10, pendingIntent);
         } else {
             Log.e("CheckSched", "scheduling in releasemode");
             // Set the alarm to start at approximately ?:??.
             calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 15);
-            calendar.set(Calendar.MINUTE, 36);
+            calendar.set(Calendar.HOUR_OF_DAY, 7);
 
             alarmMgr.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),

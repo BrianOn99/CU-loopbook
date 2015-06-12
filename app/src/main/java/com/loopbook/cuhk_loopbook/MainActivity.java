@@ -49,8 +49,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
-    Menu myMenu;
+    private Menu myMenu;
     private boolean renew = false;
+    private ActionBar actionBar;
+    private short tabNum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // Create the adapter that will return a fragment for each of the 2
@@ -94,6 +96,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             actionBar.selectTab(actionBar.getTabAt(1));
         }
 
+        if (savedInstanceState != null) {
+            tabNum = savedInstanceState.getShort("tabNum", (short)0);
+        }
+
         if (savedInstanceState == null && isFirstRun()) {
             if (BuildInfo.DEBUG)
                 Toast.makeText(this, "firstrun", Toast.LENGTH_SHORT).show();
@@ -119,6 +125,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Inflate the menu; this adds items to the action bar if it is present.
         myMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        actionBar.selectTab(actionBar.getTabAt(tabNum));
+        onTabUnselected(actionBar.getTabAt(1-tabNum), null);
+        onTabSelected(actionBar.getTabAt(tabNum), null);
         return true;
     }
 
@@ -162,6 +171,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        int tabNum = actionBar.getSelectedTab().getPosition();
+        outState.putShort("tabNum", (short)tabNum);
     }
 
     /**
@@ -218,19 +234,26 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public static CatalogFragment getInstance() { return singleton; }
 
         @Override
+        public void onSaveInstanceState(Bundle outState) {
+            currentView.saveState(outState);
+        }
+
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
-            WebView myWebView = (WebView) inflater.inflate(R.layout.fragment_catalog, container, false);
-            myWebView.setWebViewClient(new WebViewClient());
-            myWebView.getSettings().setJavaScriptEnabled(true);
-            currentView = myWebView;
+            currentView = (WebView) inflater.inflate(R.layout.fragment_catalog, container, false);
+            currentView.setWebViewClient(new WebViewClient());
+            currentView.getSettings().setJavaScriptEnabled(true);
+            if (savedInstanceState != null) {
+                currentView.restoreState(savedInstanceState);
+                return currentView;
+            }
             if (loginOnStart) {
                 login(getActivity());
-            } else {
             }
 
-            return myWebView;
+            return currentView;
         }
 
         public void login(Context c) {

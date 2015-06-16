@@ -9,8 +9,9 @@
         <!--Status bar color-->
         <item name="colorPrimaryDark">@color/accent_material_light</item>
         <!--Window color-->
-        <item name="android:windowBackground">@color/accent_material_light</item>
+        <item name="android:windowBackground">@color/light_brown</item>
 
-        <item name="android:textColor">#eeeeee</item>
+        <item name="android:textColor">#404040</item>
     </style>
+
 </resources>

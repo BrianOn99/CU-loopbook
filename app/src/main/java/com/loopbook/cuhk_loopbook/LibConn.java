@@ -19,6 +19,8 @@ public class LibConn {
     private String bookhref;
     private Map<String, String> cookies;
 
+    public static class NoBooksError extends RuntimeException {};
+
     public LibConn(String name, String passwd) {
         this.name = name;
         this.passwd = passwd;
@@ -68,9 +70,10 @@ public class LibConn {
         //Element name = doc.select("strong").first();
         Element bookListLink = doc.select(".patroninfoList a").first();
 
-        if (bookListLink != null)
-            this.bookhref = bookListLink.attr("abs:href");
-        if (bookListLink == null || this.bookhref == "")
+        if (bookListLink == null)
+            throw new NoBooksError();
+        this.bookhref = bookListLink.attr("abs:href");
+        if (this.bookhref == "")
             throw new java.text.ParseException("Cannnot get books after login", 0);
         this.cookies = resp.cookies();
     }

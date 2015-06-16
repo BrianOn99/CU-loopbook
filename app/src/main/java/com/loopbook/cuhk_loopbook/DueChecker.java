@@ -30,7 +30,7 @@ public class DueChecker extends BroadcastReceiver {
             boolean connectable = LibConn.isConnectable(context[0]);
             try {
                 return DataIO.getData(this.context);
-            } catch (java.io.IOException | java.text.ParseException e) {
+            } catch (java.io.IOException | java.text.ParseException | LibConn.NoBooksError e) {
                 return null;
             }
         }

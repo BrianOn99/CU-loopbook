@@ -53,14 +53,18 @@ public class BookFragment extends Fragment {
                 this.context = context[0];
                 String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
                 publishProgress(msg);
+
+                books.clear();
                 try {
                     elm = DataIO.getData(this.context);
                 } catch (java.io.IOException | java.text.ParseException e) {
                     caughtException = e;
                     return null;
+                } catch (LibConn.NoBooksError e) {
+                    books.add("No books borrowed");
+                    return books;
                 }
 
-                books.clear();
                 for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
                     books.add(book.get("title") + "\n" + book.get("dueDate"));
                 }

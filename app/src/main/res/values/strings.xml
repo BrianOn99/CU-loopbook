@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">CUHK LoopBook</string>
     <string name="activity_setting">Setting</string>
+    <string name="no_books">No Books</string>
 
     <string name="title_section1">Books</string>
     <string name="title_section2">Login</string>

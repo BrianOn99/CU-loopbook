@@ -88,8 +88,16 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(myIntent1);
                 break;
             case R.id.action_renew:
-                Intent myIntent2 = new Intent(android.content.Intent.ACTION_VIEW,
-                                             Uri.parse("https://m.library.cuhk.edu.hk/patroninfo"));
+                /* after many despairing attempt to open chrome with POST
+                 * method, I found that I can log in with GET method!!!
+                 * be aware that this is less secure, but nobody cares
+                 */
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String user_id = prefs.getString("user_id", "");
+                String user_passwd = prefs.getString("user_passwd", "");
+                String url = "https://m.library.cuhk.edu.hk/patroninfo?code=%s&pin=%s";
+                url = String.format(url, user_id, user_passwd);
+                Intent myIntent2 = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(myIntent2);
                 break;
             case R.id.action_refresh:

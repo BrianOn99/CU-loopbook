@@ -55,6 +55,10 @@ public class DueChecker extends BroadcastReceiver {
         Calendar DaysLater = Calendar.getInstance();
         DaysLater.add(Calendar.DATE, day_threshold);
 
+        int mindiff = 999;
+        int count = 0;
+        String lastBookTitle = "";
+
         for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
             String bookTitle = book.get("title");
             String date = book.get("dueDate");
@@ -67,13 +71,21 @@ public class DueChecker extends BroadcastReceiver {
             if (DaysLater.compareTo(dueDate) > 0) {
                 int diff = dueDate.get(Calendar.DAY_OF_YEAR) -
                            Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-                String title = String.format("Book due after %d days", diff);
-                NotificationManager nManager = (NotificationManager)context
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationCompat.Builder builder = getNotification(context, title, bookTitle);
-                nManager.notify(notifyId++, builder.build());
+                count++;
+                if (mindiff > diff) {
+                    mindiff = diff;
+                    lastBookTitle = bookTitle;
+                }
             }
         }
+
+        if (count == 0) return;
+
+        String title = String.format("%s Book coming due (>=%d days)", count, mindiff);
+        NotificationManager nManager = (NotificationManager)context
+            .getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = getNotification(context, title, lastBookTitle);
+        nManager.notify(notifyId++, builder.build());
     }
 
     public static NotificationCompat.Builder getNotification(

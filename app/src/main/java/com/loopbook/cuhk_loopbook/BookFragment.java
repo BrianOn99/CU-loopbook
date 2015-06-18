@@ -159,7 +159,8 @@ public class BookFragment extends Fragment {
                 getActivity(),
                 R.layout.list_item,
                 data.getbooks());
-        refresh();
+        if (!(MainActivity.isFirstRun(getActivity())))
+            refresh();
     }
 
     @Override

@@ -52,16 +52,16 @@ public class MainActivity extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null && isFirstRun()) {
+        if (savedInstanceState == null && isFirstRun(this)) {
             if (BuildInfo.DEBUG)
                 Toast.makeText(this, "firstrun", Toast.LENGTH_SHORT).show();
-            setRunned();
-            CheckSched.scheduleNotification(this);
+            Intent myIntent1 = new Intent(this, Setting.class);
+            startActivityForResult(myIntent1, 1);
         }
     }
 
-    public boolean isFirstRun() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    public static boolean isFirstRun(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         return prefs.getBoolean("firstrun", true);
     }
 
@@ -70,6 +70,11 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("firstrun", false);
         editor.commit();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setRunned();
+        CheckSched.scheduleNotification(this);
     }
 
     @Override

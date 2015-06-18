@@ -102,8 +102,9 @@ public class LibConn {
         Document doc;
         try {
             doc = Jsoup.connect(this.bookhref).cookies(this.cookies).get();
-        } catch(Exception e) { 
-            throw new java.io.IOException("Failed connection"); 
+        } catch(java.io.IOException e) { 
+            Log.e("Libconn", "fail getting books form " + this.bookhref);
+            throw new java.io.IOException("Failed getting books"); 
         }
 
         Element table = doc.select("table.patFunc").first();

@@ -29,7 +29,8 @@ public class DueChecker extends BroadcastReceiver {
             try {
                 return DataIO.getData(this.context);
             } catch (java.io.IOException | java.text.ParseException | LibConn.NoBooksError e) {
-                return null;
+                Log.e("DueChecker", "Cannot connect even there is internet. Use stored data instead");
+                return DataIO.getStoredData(this.context);
             }
         }
 

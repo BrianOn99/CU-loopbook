@@ -57,7 +57,7 @@ public class DueChecker extends BroadcastReceiver {
 
         for (LibConn.Book book: LibConn.getBooksFromElement(elm)) {
             int remain = book.remainDays();
-            if (remain <= day_threshold) {
+            if (remain < day_threshold) {
                 count++;
                 if (mindiff > remain) {
                     mindiff = remain;

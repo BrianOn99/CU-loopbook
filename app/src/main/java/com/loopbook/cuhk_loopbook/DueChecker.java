@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.graphics.BitmapFactory;
 
 import java.util.*;
-import java.text.SimpleDateFormat;
 
 import org.jsoup.nodes.Element;
 import android.util.Log;
@@ -27,7 +26,6 @@ public class DueChecker extends BroadcastReceiver {
             Log.e("DueChecker", "doingInbackground");
             Element elm;
             this.context = context[0];
-            boolean connectable = LibConn.isConnectable(context[0]);
             try {
                 return DataIO.getData(this.context);
             } catch (java.io.IOException | java.text.ParseException | LibConn.NoBooksError e) {
@@ -51,30 +49,17 @@ public class DueChecker extends BroadcastReceiver {
     }
 
     private static void checker(Context context, Element elm) {
-        SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy");
-        Calendar DaysLater = Calendar.getInstance();
-        DaysLater.add(Calendar.DATE, day_threshold);
-
         int mindiff = 999;
         int count = 0;
         String lastBookTitle = "";
 
-        for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
-            String bookTitle = book.get("title");
-            String date = book.get("dueDate");
-            Calendar dueDate = Calendar.getInstance();
-            try {
-                dueDate.setTime(dateparser.parse(date));
-            } catch (java.text.ParseException e) {
-            }
-
-            if (DaysLater.compareTo(dueDate) > 0) {
-                int diff = dueDate.get(Calendar.DAY_OF_YEAR) -
-                           Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+        for (LibConn.Book book: LibConn.getBooksFromElement(elm)) {
+            int remain = book.remainDays();
+            if (remain <= day_threshold) {
                 count++;
-                if (mindiff > diff) {
-                    mindiff = diff;
-                    lastBookTitle = bookTitle;
+                if (mindiff > remain) {
+                    mindiff = remain;
+                    lastBookTitle = book.name;
                 }
             }
         }

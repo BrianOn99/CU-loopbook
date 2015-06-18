@@ -1,6 +1,7 @@
 package com.loopbook.cuhk_loopbook;
 
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -65,8 +66,9 @@ public class BookFragment extends Fragment {
                     return books;
                 }
 
-                for (Map<String, String> book: LibConn.getBooksFromElement(elm)) {
-                    books.add(book.get("title") + "\n" + book.get("dueDate"));
+                SimpleDateFormat formater = new SimpleDateFormat("dd/MM");
+                for (LibConn.Book book: LibConn.getBooksFromElement(elm)) {
+                    books.add(book.name + "\n" + formater.format(book.dueDate.getTime()));
                 }
 
                 return books;

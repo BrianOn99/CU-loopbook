@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.Connection;
 import java.util.*;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 
 import android.content.Context;
 import android.util.Log;
@@ -18,6 +19,22 @@ public class LibConn {
     private final String passwd;
     private String bookhref;
     private Map<String, String> cookies;
+
+    public static class Book {
+        public String name;
+        public Calendar dueDate;
+
+        public Book(String name, Calendar dueDate) {
+            this.name = name;
+            this.dueDate = dueDate;
+        }
+
+        public int remainDays() {
+            long diff = this.dueDate.getTimeInMillis()
+                       - Calendar.getInstance().getTimeInMillis();
+            return (int)(diff/(1000*60*60*24));
+        }
+    }
 
     public static class NoBooksError extends RuntimeException {};
 
@@ -91,22 +108,29 @@ public class LibConn {
         return table;
     }
 
-    public static ArrayList<Map<String, String>> getBooksFromElement(Element elm) {
+    public static ArrayList<Book> getBooksFromElement(Element elm) {
         Elements bookrows = elm.select("table.patFunc > tbody > tr.patFuncEntry");
-        ArrayList<Map<String, String>> bookList = new ArrayList<>();
+        ArrayList<Book> bookList = new ArrayList<>();
+        SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy");
 
         for (Element row : bookrows) {
-            Map<String, String> info = new HashMap<>();
             /* the patfunc field has book name and author seperated by "/" */
-            info.put("title", row.select(".patFuncTitle").text().split("/")[0]);
-            info.put("dueDate", row.select(".patFuncStatus").text().substring(4, 12));
-            bookList.add(info);
+            String title = row.select(".patFuncTitle").text().split("/")[0];
+            String dateStr = row.select(".patFuncStatus").text().substring(4, 12);
+
+            Calendar dueDate = Calendar.getInstance();
+            try {
+                dueDate.setTime(dateparser.parse(dateStr));
+            } catch (java.text.ParseException e) {
+            }
+
+            bookList.add(new Book(title, dueDate));
         }
 
         return bookList;
     }
 
-    public ArrayList<Map<String, String>> getBooks() throws java.io.IOException {
+    public ArrayList<Book> getBooks() throws java.io.IOException {
         return getBooksFromElement(getBooksElement());
     }
 }

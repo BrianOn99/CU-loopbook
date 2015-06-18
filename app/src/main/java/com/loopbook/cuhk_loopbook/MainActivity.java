@@ -75,6 +75,7 @@ public class MainActivity extends ActionBarActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setRunned();
         CheckSched.scheduleNotification(this);
+        BookFragment.getInstance().refresh();
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 
 import java.util.*;
 
@@ -79,7 +80,9 @@ public class DueChecker extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(title);
         builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setSmallIcon(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ?
+                             R.drawable.ic_dialog_alert_material:
+                             R.drawable.ic_launcher);
         builder.setLargeIcon(BitmapFactory.decodeResource(
                     context.getResources(), R.drawable.ic_stat_action_schedule));
 

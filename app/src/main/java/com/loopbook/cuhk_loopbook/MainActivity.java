@@ -4,21 +4,12 @@ import java.util.*;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
-import android.os.AsyncTask;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.net.Uri;
@@ -26,8 +17,6 @@ import org.apache.http.util.EncodingUtils;
 
 import android.content.Intent; 
 import android.content.Context;
-
-import org.jsoup.nodes.Element;
 
 
 public class MainActivity extends ActionBarActivity {

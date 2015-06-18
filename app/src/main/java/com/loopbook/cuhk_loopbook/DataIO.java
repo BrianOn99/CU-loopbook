@@ -11,8 +11,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.Jsoup; 
 
-import com.loopbook.cuhk_loopbook.LibConn;
-
 public class DataIO {
     static String filename = "books.html";
 

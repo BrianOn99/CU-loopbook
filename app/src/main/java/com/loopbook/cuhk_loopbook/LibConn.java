@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.Connection;
 import java.util.*;
-import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 
 import android.content.Context;
@@ -50,8 +49,8 @@ public class LibConn {
             (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         boolean connectable =  netInfo != null && netInfo.isConnectedOrConnecting();
-        if (connectable) Log.e("Libconn", "connectable");
-        else Log.e("Libconn", "unconnectable");
+        if (connectable) Log.i("Libconn", "connectable");
+        else Log.i("Libconn", "unconnectable");
         return connectable;
     }
 
@@ -79,7 +78,7 @@ public class LibConn {
                     throw new java.io.IOException("Failed connection");
             }
         }
-        Log.e("Libconn", "HTTP and parse ok");
+        Log.i("Libconn", "HTTP and parse ok");
 
         Elements succElm = doc.getElementsByClass("loggedInMessage");
         if (succElm.size() == 0) {

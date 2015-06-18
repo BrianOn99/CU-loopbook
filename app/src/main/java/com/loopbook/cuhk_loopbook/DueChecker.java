@@ -24,7 +24,7 @@ public class DueChecker extends BroadcastReceiver {
 
         @Override
         protected Element doInBackground(Context... context) {
-            Log.e("DueChecker", "doingInbackground");
+            Log.i("DueChecker", "doingInbackground");
             Element elm;
             this.context = context[0];
             try {
@@ -38,14 +38,14 @@ public class DueChecker extends BroadcastReceiver {
         @Override
         protected void onPostExecute(Element elm) {
             if (elm != null) {
-                Log.e("DueChecker", "postexecute");
+                Log.i("DueChecker", "postexecute");
                 DueChecker.checker(context, elm);
             }
         }
     }
 
     public void onReceive(Context context, Intent intent) {
-        Log.e("DueChecker", "onReceive");
+        Log.i("DueChecker", "onReceive");
         AsyncBookLoader bookLoader = new AsyncBookLoader();
         bookLoader.execute(context);
     }

@@ -14,9 +14,6 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.AsyncTask;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import org.apache.http.util.EncodingUtils;
 
 import android.content.Context;
 

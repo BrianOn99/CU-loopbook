@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (savedInstanceState == null && isFirstRun(this)) {
             if (BuildInfo.DEBUG)
-                Toast.makeText(this, "firstrun", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
             Intent myIntent1 = new Intent(this, Setting.class);
             startActivityForResult(myIntent1, 1);
         }

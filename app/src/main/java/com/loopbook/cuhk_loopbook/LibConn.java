@@ -36,7 +36,9 @@ public class LibConn {
         }
     }
 
-    public static class NoBooksError extends RuntimeException {};
+    public static class NoBooksError extends RuntimeException {
+        public NoBooksError(String msg) { super(msg); }
+    };
 
     public LibConn(String name, String passwd) {
         this.name = name;
@@ -81,6 +83,7 @@ public class LibConn {
 
         Elements succElm = doc.getElementsByClass("loggedInMessage");
         if (succElm.size() == 0) {
+            //Log.e("Libconn", "fail login\n" + doc.body().html());
             throw new java.text.ParseException("Failed login", 0);
         }
 
@@ -88,7 +91,7 @@ public class LibConn {
         Element bookListLink = doc.select(".patroninfoList a").first();
 
         if (bookListLink == null)
-            throw new NoBooksError();
+            throw new NoBooksError("No Book");
         this.bookhref = bookListLink.attr("abs:href");
         if (this.bookhref == "")
             throw new java.text.ParseException("Cannnot get books after login", 0);

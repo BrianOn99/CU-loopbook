@@ -42,8 +42,8 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         if (savedInstanceState == null && isFirstRun(this)) {
-            if (BuildInfo.DEBUG)
-                Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
+            CheckSched.scheduleNotification(this);
+            Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
             Intent myIntent1 = new Intent(this, Setting.class);
             startActivityForResult(myIntent1, 1);
         }
@@ -63,7 +63,6 @@ public class MainActivity extends ActionBarActivity {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setRunned();
-        CheckSched.scheduleNotification(this);
         BookFragment.getInstance().refresh();
     }
 
@@ -80,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent myIntent1 = new Intent(this, Setting.class);
-                startActivity(myIntent1);
+                startActivityForResult(myIntent1, 1);
                 break;
             case R.id.action_renew:
                 /* after many despairing attempt to open chrome with POST

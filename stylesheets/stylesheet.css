@@ -354,6 +354,30 @@ Full-Width Styles
   background: url(../images/sprite_download.png) no-repeat top right;
 }
 
+.dl_label {
+  float: right;
+  color: #555;
+}
+
+.question, .answer {
+  display: table-row;
+}
+
+.question::before {
+  padding-right: 0.5em;
+  display: table-cell;
+  content: "Q:";
+}
+.answer::before {
+  padding-right: 0.5em;
+  display: table-cell;
+  content: "A:";
+}
+
+.question span, .answer span {
+  display: table-cell;
+}
+
 #main_content_wrap {
   background: #f2f2f2;
   border-top: 1px solid #111;

@@ -354,6 +354,25 @@ Full-Width Styles
   background: url(../images/sprite_download.png) no-repeat top right;
 }
 
+.screenshot-section {
+  margin: auto;
+  text-align: center;
+  margin-bottom: 3em;
+}
+
+.screenshot-section figure {
+  display: inline-block;
+  padding: 1em;
+  width: 40%;
+  color: #579;
+}
+
+.screenshot-section figure img {
+  height: 30em;
+  margin-bottom: 0;
+  padding-bottom: 0.5em;
+}
+
 .dl_label {
   float: right;
   color: #555;

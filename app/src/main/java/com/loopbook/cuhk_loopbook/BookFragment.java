@@ -156,8 +156,11 @@ public class BookFragment extends Fragment {
                 getActivity(),
                 R.layout.list_item,
                 data.getbooks());
-        if (!(MainActivity.isFirstRun(getActivity())))
+        if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
+            getArguments().putBoolean("firstRun", false);
+        } else {
             refresh();
+        }
     }
 
     @Override

@@ -30,23 +30,31 @@ public class MainActivity extends ActionBarActivity {
 
         if (getIntent().getStringExtra("renew") != null) { renew = true; }
 
-        setContentView(R.layout.activity_main);
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_placeholder, new BookFragment())
-                .commit();
-        }
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        BookFragment bookFrag = new BookFragment();
 
         if (savedInstanceState == null && isFirstRun(this)) {
+            setRunned();
+
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("firstRun", true);
+            bookFrag.setArguments(bundle);
+
             CheckSched.scheduleNotification(this);
             Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
             Intent myIntent1 = new Intent(this, Setting.class);
             startActivityForResult(myIntent1, 1);
         }
+
+        setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_placeholder, bookFrag)
+                .commit();
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     public static boolean isFirstRun(Context ctx) {
@@ -62,7 +70,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setRunned();
         BookFragment.getInstance().refresh();
     }
 

@@ -32,7 +32,9 @@ public class MainActivity extends ActionBarActivity {
 
         BookFragment bookFrag = new BookFragment();
 
+        boolean firstRun = false;
         if (savedInstanceState == null && isFirstRun(this)) {
+            firstRun = true;
             setRunned();
 
             Bundle bundle = new Bundle();
@@ -40,9 +42,6 @@ public class MainActivity extends ActionBarActivity {
             bookFrag.setArguments(bundle);
 
             CheckSched.scheduleNotification(this);
-            Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
-            Intent myIntent1 = new Intent(this, Setting.class);
-            startActivityForResult(myIntent1, 1);
         }
 
         setContentView(R.layout.activity_main);
@@ -55,6 +54,12 @@ public class MainActivity extends ActionBarActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (firstRun) {
+            Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
+            Intent myIntent1 = new Intent(this, Setting.class);
+            startActivityForResult(myIntent1, 1);
+        }
     }
 
     public static boolean isFirstRun(Context ctx) {

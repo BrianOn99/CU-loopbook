@@ -12,35 +12,31 @@ import android.os.Build;
 
 import java.util.*;
 
-import org.jsoup.nodes.Element;
 import android.util.Log;
 
 public class DueChecker extends BroadcastReceiver {
     public static int notifyId = 1;
     public static int day_threshold = BuildInfo.DEBUG ? 20 : 2;
 
-    private class AsyncBookLoader extends AsyncTask<Context, Void, Element> {
+    private class AsyncBookLoader extends AsyncTask<Context, Void, ArrayList<LibConn.Book>> {
         private Context context;
 
         @Override
-        protected Element doInBackground(Context... context) {
+        protected ArrayList<LibConn.Book> doInBackground(Context... context) {
             Log.i("DueChecker", "doingInbackground");
-            Element elm;
             this.context = context[0];
             try {
-                return DataIO.getData(this.context);
-            } catch (java.io.IOException | java.text.ParseException | LibConn.NoBooksError e) {
+                return DataIO.getBooks(this.context);
+            } catch (java.io.IOException | java.text.ParseException e) {
                 Log.e("DueChecker", "Cannot connect even there is internet. Use stored data instead");
-                return DataIO.getStoredData(this.context);
+                return DataIO.getStoredBooks(this.context);
             }
         }
 
         @Override
-        protected void onPostExecute(Element elm) {
-            if (elm != null) {
-                Log.i("DueChecker", "postexecute");
-                DueChecker.checker(context, elm);
-            }
+        protected void onPostExecute(ArrayList<LibConn.Book> booksGot) {
+            Log.i("DueChecker", "postexecute");
+            DueChecker.checker(context, booksGot);
         }
     }
 
@@ -50,12 +46,12 @@ public class DueChecker extends BroadcastReceiver {
         bookLoader.execute(context);
     }
 
-    private static void checker(Context context, Element elm) {
+    private static void checker(Context context, ArrayList<LibConn.Book> booksGot) {
         int mindiff = 999;
         int count = 0;
         String lastBookTitle = "";
 
-        for (LibConn.Book book: LibConn.getBooksFromElement(elm)) {
+        for (LibConn.Book book: booksGot) {
             int remain = book.remainDays();
             if (remain < day_threshold) {
                 count++;

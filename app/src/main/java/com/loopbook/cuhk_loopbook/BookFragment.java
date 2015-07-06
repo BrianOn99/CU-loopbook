@@ -17,7 +17,6 @@ import android.os.AsyncTask;
 
 import android.content.Context;
 
-import org.jsoup.nodes.Element;
 import android.util.Log;
 
 public class BookFragment extends Fragment {
@@ -96,20 +95,20 @@ public class BookFragment extends Fragment {
 
             @Override
             protected Void doInBackground(Context... context) {
-                Element elm;
                 this.context = context[0];
                 String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
                 publishProgress(msg);
 
                 books.clear();
+                ArrayList<LibConn.Book> booksGot;
                 try {
-                    elm = DataIO.getData(this.context);
-                } catch (LibConn.NoBooksError | java.io.IOException | java.text.ParseException e) {
+                    booksGot = DataIO.getBooks(this.context);
+                } catch (java.io.IOException | java.text.ParseException e) {
                     caughtException = e;
                     return null;
                 }
 
-                for (LibConn.Book book: LibConn.getBooksFromElement(elm)) {
+                for (LibConn.Book book: booksGot) {  /* make deep copy */
                     books.add(book);
                 }
                 return null;
@@ -127,6 +126,11 @@ public class BookFragment extends Fragment {
                             caughtException.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 } else {
+                    if (books.size() == 0) {
+                        Toast.makeText(context,
+                                "No Books in Account",
+                                Toast.LENGTH_SHORT).show();
+                    }
                     bookAdapter.notifyDataSetChanged();
                 }
             }

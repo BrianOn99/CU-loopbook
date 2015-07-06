@@ -8,30 +8,35 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.Tag;
 import org.jsoup.Jsoup; 
 
 public class DataIO {
     static String filename = "books.html";
 
-    public static Element getData(Context context)
+    public static ArrayList<LibConn.Book> getBooks(Context context)
                           throws IOException, java.text.ParseException {
         return LibConn.isConnectable(context) ?
-            refreshStoredData(context) :
-            getStoredData(context);
+            refreshStoredBooks(context) :
+            getStoredBooks(context);
     }
 
-    public static Element refreshStoredData(Context c) 
+    public static ArrayList<LibConn.Book> refreshStoredBooks(Context c) 
                           throws IOException, java.text.ParseException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String user_id = prefs.getString("user_id", "");
         String user_passwd = prefs.getString("user_passwd", "");
         LibConn myLib = new LibConn(user_id, user_passwd);
-        myLib.login();
-        Element elm = myLib.getBooksElement();
+        Element elm;
+        try {
+            myLib.login();
+            elm = myLib.getBooksElement();
+        } catch (LibConn.NoBooksError e) {
+            /* Need to make & save an fake element, so that no notification popup */
+            elm = LibConn.newBooksElement();
+        }
 
         saveData(c, elm);
-        return elm;
+        return LibConn.getBooksFromElement(elm);
     }
 
     public static void saveData(Context c, Element elm) {
@@ -43,16 +48,14 @@ public class DataIO {
         }
     }
 
-    public static Element getStoredData(Context c) {
+    public static ArrayList<LibConn.Book> getStoredBooks(Context c) {
         try (BufferedInputStream in = new BufferedInputStream(
                     c.openFileInput(filename))) {
             Element elm = Jsoup.parse(in, "UTF-8", "")
                                .select("table.patFunc").first();
-            return elm;
+            return LibConn.getBooksFromElement(elm);
         } catch (IOException e) {
-            return new Element(Tag.valueOf("table"), "").classNames(
-                           new HashSet(Arrays.asList("patFunc"))
-                       );
+            return new ArrayList<LibConn.Book>();
         }
     }
 }

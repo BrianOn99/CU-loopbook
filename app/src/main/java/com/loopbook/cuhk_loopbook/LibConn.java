@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.Connection;
+import org.jsoup.parser.Tag;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
@@ -133,7 +134,9 @@ public class LibConn {
         return bookList;
     }
 
-    public ArrayList<Book> getBooks() throws java.io.IOException {
-        return getBooksFromElement(getBooksElement());
+    public static Element newBooksElement() {
+            return new Element(Tag.valueOf("table"), "").classNames(
+                           new HashSet(Arrays.asList("patFunc"))
+                       );
     }
 }

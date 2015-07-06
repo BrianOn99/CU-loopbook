@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import org.jsoup.nodes.Element;
 import org.jsoup.Jsoup; 
 
+/* don't use try-with-resources, unless android4.x has extincted */
 public class DataIO {
     static String filename = "books.html";
 
@@ -40,22 +41,36 @@ public class DataIO {
     }
 
     public static void saveData(Context c, Element elm) {
-        try (BufferedOutputStream out = new BufferedOutputStream(
-                    c.openFileOutput(filename, Context.MODE_PRIVATE))) {
+        BufferedOutputStream out = null;
+        try {
+            out = new BufferedOutputStream(c.openFileOutput(filename, Context.MODE_PRIVATE));
             out.write(elm.outerHtml().getBytes());
             out.close();
         } catch (IOException e) {
+        } finally {
+            close(out);
         }
     }
 
     public static ArrayList<LibConn.Book> getStoredBooks(Context c) {
-        try (BufferedInputStream in = new BufferedInputStream(
-                    c.openFileInput(filename))) {
+        BufferedInputStream in = null;
+        try {
+            in = new BufferedInputStream(c.openFileInput(filename));
             Element elm = Jsoup.parse(in, "UTF-8", "")
                                .select("table.patFunc").first();
             return LibConn.getBooksFromElement(elm);
         } catch (IOException e) {
             return new ArrayList<LibConn.Book>();
+        } finally {
+            close(in);
+        }
+    }
+
+    public static void close(java.io.Closeable c) {
+        if (c == null) return; 
+        try {
+            c.close();
+        } catch (IOException e) {
         }
     }
 }

@@ -64,12 +64,12 @@ public class DueChecker extends BroadcastReceiver {
 
         if (count == 0) return;
 
-        String title = String.format("%s Book coming due", count);
+        String title = String.format(context.getString(R.string.notification_title), count);
         NotificationManager nManager = (NotificationManager)context
             .getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = getNotification(
             context, title,
-            String.format("(%d days left) %s", mindiff, lastBookTitle));
+            String.format(context.getString(R.string.notification_body), mindiff, lastBookTitle));
         nManager.notify(notifyId++, builder.build());
     }
 

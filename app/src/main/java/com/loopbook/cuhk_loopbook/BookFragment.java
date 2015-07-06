@@ -21,7 +21,6 @@ import android.util.Log;
 
 public class BookFragment extends Fragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private BookAdapter bookAdapter;
     private static BookFragment instance;
     public Data data;
@@ -44,7 +43,7 @@ public class BookFragment extends Fragment {
      * some code is copied from <Android Cookbook>, Oreilly 2012, recipe 9.2
      */
     public static class BookAdapter extends BaseAdapter {
-        private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM");
+        private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM", java.util.Locale.UK);
         private LayoutInflater mInflater;
         private ArrayList<LibConn.Book> books;
         private int viewResourceId;
@@ -128,7 +127,7 @@ public class BookFragment extends Fragment {
                 } else {
                     if (books.size() == 0) {
                         Toast.makeText(context,
-                                "No Books in Account",
+                                context.getString(R.string.no_books),
                                 Toast.LENGTH_SHORT).show();
                     }
                     bookAdapter.notifyDataSetChanged();

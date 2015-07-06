@@ -17,7 +17,7 @@ public class Setting extends PreferenceActivity {
         setContentView(R.layout.settings_activity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.setting_bar);
-        toolbar.setTitle("Setting");
+        toolbar.setTitle(getString(R.string.activity_setting));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

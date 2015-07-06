@@ -115,7 +115,7 @@ public class LibConn {
     public static ArrayList<Book> getBooksFromElement(Element elm) {
         Elements bookrows = elm.select("table.patFunc > tbody > tr.patFuncEntry");
         ArrayList<Book> bookList = new ArrayList<>();
-        SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy");
+        SimpleDateFormat dateparser = new SimpleDateFormat("dd-MM-yy", java.util.Locale.UK);
 
         for (Element row : bookrows) {
             /* the patfunc field has book name and author seperated by "/" */

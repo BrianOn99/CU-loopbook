@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         if (firstRun) {
-            Toast.makeText(this, "press back when you finish", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.first_run_msg), Toast.LENGTH_LONG).show();
             Intent myIntent1 = new Intent(this, Setting.class);
             startActivityForResult(myIntent1, 1);
         }

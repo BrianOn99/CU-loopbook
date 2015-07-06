@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">中大LoopBook</string>
+    <string name="activity_setting">設定</string>
+    <string name="no_books">無書喎</string>
+    <string name="first_run_msg">設定完就撳「←」la</string>
+
+    <string name="menu_setting_label">設定</string>
+    <string name="menu_renew">續借</string>
+    <string name="menu_refresh">重新載入</string>
+
+    <string name="pref_id_label">學生ID</string>
+    <string name="pref_passwd_label">圖書館密碼</string>
+
+    <string name="notification_title" formatted="false">%s本書就快過期 &gt;_&lt;</string>
+    <string name="notification_body" formatted="false">(尚有%d日) %s</string>
+</resources>

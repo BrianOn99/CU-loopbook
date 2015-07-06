@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CUHK LoopBook</string>
+    <string name="app_name">中大LoopBook</string>
     <string name="activity_setting">Setting</string>
     <string name="no_books">No Books in Account</string>
     <string name="first_run_msg">press ← when finished</string>
@@ -10,9 +10,9 @@
     <string name="menu_refresh">refresh</string>
 
     <string name="pref_id_label">User ID</string>
-    <string name="hint_id">e.g. 1155032703</string>
+    <string name="hint_id" translatable="false">e.g. 1155032703</string>
     <string name="pref_passwd_label">Password</string>
-    <string name="hint_passwd">e.g. 19911005</string>
+    <string name="hint_passwd" translatable="false">e.g. 19911005</string>
 
     <string name="notification_title" formatted="false">%s Book coming due</string>
     <string name="notification_body" formatted="false">(%d days left) %s</string>

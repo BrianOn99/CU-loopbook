@@ -1,11 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_refresh" android:title="@string/menu_refresh"
+        android:icon="@drawable/refresh"
+        android:orderInCategory="100" app:showAsAction="always" android:visible="true"/>
     <item android:id="@+id/action_renew" android:title="@string/menu_renew"
         android:icon="@drawable/chrome"
         android:orderInCategory="100" app:showAsAction="always" android:visible="true"/>
-    <item android:id="@+id/action_refresh" android:title="@string/menu_refresh"
-        android:orderInCategory="100" app:showAsAction="ifRoom" android:visible="true"/>
     <item android:id="@+id/action_settings" android:title="@string/menu_setting_label"
         android:icon="@drawable/ic_menu_login"
         android:orderInCategory="100" app:showAsAction="ifRoom" />

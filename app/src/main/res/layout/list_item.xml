@@ -16,18 +16,6 @@
                 android:layout_height="fill_parent"
                 android:textColor="#202020"
                 android:paddingLeft="15dp"
-                android:textSize="18dp" >
+                android:textSize="18sp" >
         </TextView>
 </LinearLayout>
-
-<!--
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    android:gravity="center_vertical"
-    android:paddingLeft="6dip"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-/>
--->

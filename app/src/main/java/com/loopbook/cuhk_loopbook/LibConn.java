@@ -127,6 +127,7 @@ public class LibConn {
                 dueDate.setTime(dateparser.parse(dateStr));
             } catch (java.text.ParseException e) {
             }
+            dueDate.set(Calendar.HOUR_OF_DAY, 23);
 
             bookList.add(new Book(title, dueDate));
         }

@@ -21,32 +21,26 @@ import android.content.Context;
 
 public class MainActivity extends ActionBarActivity {
 
-    private Menu myMenu;
-    private boolean renew = false;
+    // private boolean renew = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getIntent().getStringExtra("renew") != null) { renew = true; }
+        // if (getIntent().getStringExtra("renew") != null) { renew = true; }
 
-        BookFragment bookFrag = new BookFragment();
-
-        boolean firstRun = false;
-        if (savedInstanceState == null && isFirstRun(this)) {
-            firstRun = true;
-            setRunned();
-
-            Bundle bundle = new Bundle();
-            bundle.putBoolean("firstRun", true);
-            bookFrag.setArguments(bundle);
-
-            CheckSched.scheduleNotification(this);
-        }
+        boolean firstRun = (savedInstanceState == null && isFirstRun(this));
 
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
+            BookFragment bookFrag = new BookFragment();
+            if (firstRun) {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("firstRun", true);
+                bookFrag.setArguments(bundle);
+            }
+
             getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_placeholder, bookFrag)
                 .commit();
@@ -56,6 +50,8 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         if (firstRun) {
+            setRunned();
+            CheckSched.scheduleNotification(this);
             Toast.makeText(this, getString(R.string.first_run_msg), Toast.LENGTH_LONG).show();
             Intent myIntent1 = new Intent(this, Setting.class);
             startActivityForResult(myIntent1, 1);
@@ -81,7 +77,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        myMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }

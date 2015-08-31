@@ -1,12 +1,10 @@
 package com.loopbook.cuhk_loopbook;
 
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.view.ViewGroup;
+import android.preference.Preference;
 import android.view.View;
-import android.view.LayoutInflater;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
 public class Setting extends PreferenceActivity {
@@ -24,6 +22,21 @@ public class Setting extends PreferenceActivity {
                 finish();
             }
         });
+
         addPreferencesFromResource(R.layout.prefs);
+        findPreference("alert_days").setOnPreferenceChangeListener(
+            new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference pref, Object value) {
+                    int days = Integer.parseInt((String)value);
+                    if (days > 0 && days < (BuildInfo.DEBUG ? 15 : 5)) {
+                        return true;
+                    } else {
+                        Toast.makeText(getApplicationContext(), "invalid day", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }
+            }
+        );
     }
 }

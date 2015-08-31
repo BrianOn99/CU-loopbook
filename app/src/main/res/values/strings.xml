@@ -13,6 +13,8 @@
     <string name="hint_id" translatable="false">e.g. 1155032703</string>
     <string name="pref_passwd_label">Password</string>
     <string name="hint_passwd" translatable="false">e.g. 19911005</string>
+    <string name="alert_days_label">Notify me N days before Book Due Date</string>
+    <string name="alert_days_summary">input must fall within 1-4 days</string>
 
     <string name="notification_title" formatted="false">%s Book coming due</string>
     <string name="notification_body" formatted="false">(%d days left) %s</string>

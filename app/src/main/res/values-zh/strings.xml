@@ -11,6 +11,8 @@
 
     <string name="pref_id_label">學生ID</string>
     <string name="pref_passwd_label">圖書館密碼</string>
+    <string name="alert_days_label">書過期前ɛ日通知我</string>
+    <string name="alert_days_summary">一定要輸入1-4日吖</string>
 
     <string name="notification_title" formatted="false">%s本書就快過期 &gt;_&lt;</string>
     <string name="notification_body" formatted="false">(尚有%d日) %s</string>

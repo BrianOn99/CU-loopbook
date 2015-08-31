@@ -4,6 +4,8 @@ import android.app.PendingIntent;
 import android.support.v4.app.NotificationCompat;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,7 +18,6 @@ import android.util.Log;
 
 public class DueChecker extends BroadcastReceiver {
     public static int notifyId = 1;
-    public static int day_threshold = BuildInfo.DEBUG ? 20 : 2;
 
     private class AsyncBookLoader extends AsyncTask<Context, Void, ArrayList<LibConn.Book>> {
         private Context context;
@@ -46,14 +47,21 @@ public class DueChecker extends BroadcastReceiver {
         bookLoader.execute(context);
     }
 
+    public static int getAlertDays(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.parseInt(prefs.getString("alert_days", "2"));
+    }
+
     private static void checker(Context context, ArrayList<LibConn.Book> booksGot) {
         int mindiff = 999;
         int count = 0;
         String lastBookTitle = "";
 
+        int alert_days = getAlertDays(context);
+
         for (LibConn.Book book: booksGot) {
             int remain = book.remainDays();
-            if (remain < day_threshold) {
+            if (remain < alert_days) {
                 count++;
                 if (mindiff > remain) {
                     mindiff = remain;

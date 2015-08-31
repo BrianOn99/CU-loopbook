@@ -47,8 +47,10 @@ public class BookFragment extends Fragment {
         private LayoutInflater mInflater;
         private ArrayList<LibConn.Book> books;
         private int viewResourceId;
+        private Context ctx;
 
         public BookAdapter(Context ctx, int viewResourceId, ArrayList<LibConn.Book> books) {
+            this.ctx = ctx;
             mInflater = (LayoutInflater)ctx.getSystemService(
                         Context.LAYOUT_INFLATER_SERVICE);
             this.books = books;
@@ -72,7 +74,7 @@ public class BookFragment extends Fragment {
             LibConn.Book book = books.get(position);
 
             ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
-            iv.setImageResource(book.remainDays() >= DueChecker.day_threshold ?
+            iv.setImageResource(book.remainDays() >= DueChecker.getAlertDays(ctx) ?
                                 R.drawable.green_circle :
                                 R.drawable.red_circle);
 

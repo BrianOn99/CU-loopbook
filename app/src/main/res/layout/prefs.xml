@@ -3,9 +3,16 @@
      <EditTextPreference
          android:key="user_id"
          android:title="@string/pref_id_label"
-         android:hint="@string/hint_id" />
+         android:summary="@string/hint_id" />
      <EditTextPreference
          android:key="user_passwd"
          android:title="@string/pref_passwd_label"
-         android:hint="@string/hint_passwd" />
+         android:summary="@string/hint_passwd" />
+     <EditTextPreference
+         android:key="alert_days"
+         android:title="@string/alert_days_label"
+         android:summary="@string/alert_days_summary"
+         android:defaultValue="2"
+         android:digits="0123456789" />
+     <!--  reference: http://stackoverflow.com/questions/13425338/how-to-set-only-numeric-value-for-edittextpreference-in-android#13425382 -->
 </PreferenceScreen>

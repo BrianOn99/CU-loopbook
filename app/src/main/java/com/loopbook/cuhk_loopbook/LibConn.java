@@ -136,8 +136,6 @@ public class LibConn {
     }
 
     public static Element newBooksElement() {
-            return new Element(Tag.valueOf("table"), "").classNames(
-                           new HashSet(Arrays.asList("patFunc"))
-                       );
+            return new Element(Tag.valueOf("table"), "").addClass("patFunc");
     }
 }

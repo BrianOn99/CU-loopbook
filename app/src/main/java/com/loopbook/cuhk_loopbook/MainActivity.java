@@ -13,7 +13,6 @@ import android.widget.Toast;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.net.Uri;
-import org.apache.http.util.EncodingUtils;
 
 import android.content.Intent; 
 import android.content.Context;

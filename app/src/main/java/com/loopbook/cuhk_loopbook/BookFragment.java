@@ -49,11 +49,11 @@ public class BookFragment extends Fragment {
         private int viewResourceId;
         private Context ctx;
 
-        public BookAdapter(Context ctx, int viewResourceId, ArrayList<LibConn.Book> books) {
+        public BookAdapter(Context ctx, int viewResourceId) {
             this.ctx = ctx;
             mInflater = (LayoutInflater)ctx.getSystemService(
                         Context.LAYOUT_INFLATER_SERVICE);
-            this.books = books;
+            this.books = new ArrayList<LibConn.Book>();
             this.viewResourceId = viewResourceId;
         }
 
@@ -70,37 +70,41 @@ public class BookFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = mInflater.inflate(viewResourceId, null);
+            if (convertView == null) { convertView = mInflater.inflate(viewResourceId, null); }
             LibConn.Book book = books.get(position);
 
-            ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
+            ImageView iv = (ImageView)convertView.findViewById(R.id.option_icon);
             iv.setImageResource(book.remainDays() >= DueChecker.getAlertDays(ctx) ?
                                 R.drawable.green_circle :
                                 R.drawable.red_circle);
 
-            TextView tv = (TextView)view.findViewById(R.id.option_text);
+            TextView tv = (TextView)convertView.findViewById(R.id.option_text);
             tv.setText(book.name + "\n" + formater.format(book.dueDate.getTime()));
 
-            return view;
+            return convertView;
+        }
+
+        public void setBooks(ArrayList<LibConn.Book> booksGot) {
+            /* I am afraid race condition may happen in these line (issue #2),
+             * but probability is very low */
+            books = booksGot;
+            notifyDataSetChanged();
         }
     }
 
     private static class Data {
 
-        private ArrayList<LibConn.Book> books = new ArrayList<>();
-
-        private class AsyncBookLoader extends AsyncTask<Context, String, Void> {
+        private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<LibConn.Book>> {
             private Exception caughtException = null;
             private Context context;
-            private BookAdapter bookAdapter;
+            public BookAdapter bookAdapter;
 
             @Override
-            protected Void doInBackground(Context... context) {
+            protected ArrayList<LibConn.Book> doInBackground(Context... context) {
                 this.context = context[0];
                 String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
                 publishProgress(msg);
 
-                books.clear();
                 ArrayList<LibConn.Book> booksGot;
                 try {
                     booksGot = DataIO.getBooks(this.context);
@@ -109,10 +113,7 @@ public class BookFragment extends Fragment {
                     return null;
                 }
 
-                for (LibConn.Book book: booksGot) {  /* make deep copy */
-                    books.add(book);
-                }
-                return null;
+                return booksGot;
             }
 
             @Override
@@ -121,24 +122,20 @@ public class BookFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(Void nothing) {
+            protected void onPostExecute(ArrayList<LibConn.Book> booksGot) {
                 if (caughtException != null) {
                     Toast.makeText(context,
                             caughtException.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    if (books.size() == 0) {
+                    if (booksGot.size() == 0) {
                         Toast.makeText(context,
                                 context.getString(R.string.no_books),
                                 Toast.LENGTH_SHORT).show();
                     }
-                    bookAdapter.notifyDataSetChanged();
+                    bookAdapter.setBooks(booksGot);
                 }
             }
-        }
-
-        public ArrayList<LibConn.Book> getbooks() {
-            return books;
         }
 
         public void refresh(BookAdapter adapter, Context context) {
@@ -159,8 +156,7 @@ public class BookFragment extends Fragment {
 
         bookAdapter = new BookAdapter(
                 getActivity(),
-                R.layout.list_item,
-                data.getbooks());
+                R.layout.list_item);
         if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
             getArguments().putBoolean("firstRun", false);
         } else {

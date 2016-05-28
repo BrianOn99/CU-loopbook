@@ -29,7 +29,7 @@ public class Setting extends PreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference pref, Object value) {
                     int days = Integer.parseInt((String)value);
-                    if (days > 0 && days < (BuildInfo.DEBUG ? 15 : 5)) {
+                    if (days > 0 && days < (BuildConfig.DEBUG ? 15 : 5)) {
                         return true;
                     } else {
                         Toast.makeText(getApplicationContext(), "invalid day", Toast.LENGTH_SHORT).show();

@@ -21,7 +21,7 @@ public class CheckSched extends BroadcastReceiver {
         AlarmManager alarmMgr = (AlarmManager) (context.getSystemService(Context.ALARM_SERVICE));
         Calendar calendar = Calendar.getInstance();
 
-        if (BuildInfo.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.i("CheckSched", "scheduling in debugmode");
             calendar.setTimeInMillis(System.currentTimeMillis() + 5000);
             alarmMgr.setInexactRepeating(

@@ -95,7 +95,7 @@ public class DueChecker extends BroadcastReceiver {
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
                 0,
-                new Intent(context, MainActivity.class).putExtra("renew", content),
+                new Intent(context, MainActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(contentIntent);
 

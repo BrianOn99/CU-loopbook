@@ -20,13 +20,9 @@ import android.content.Context;
 
 public class MainActivity extends ActionBarActivity {
 
-    // private boolean renew = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // if (getIntent().getStringExtra("renew") != null) { renew = true; }
 
         boolean firstRun = (savedInstanceState == null && isFirstRun(this));
 

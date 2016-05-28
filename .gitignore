@@ -1,9 +1,8 @@
+.idea/
+.gradle/
+build/
+*.iml
 *.jar
 !app/libs/*.jar
-*.war
-*.ear
-*.class
+!gradle/wrapper/gradle-wrapper.jar
 *.swp
-*.idea/
-*.gradle/
-build/

@@ -22,21 +22,7 @@ import android.util.Log;
 public class BookFragment extends Fragment {
 
     private BookAdapter bookAdapter;
-    private static BookFragment instance;
     public Data data;
-
-    public BookFragment() {
-        super();
-        instance = this;
-    }
-
-    public static BookFragment getInstance() {
-        return instance;
-    }
-
-    public void refresh() {
-        data.refresh(bookAdapter, getActivity());
-    }
 
     /* Adapter for displaying books, inluding an icon showing the book status
      * and a text of book name and due date
@@ -99,6 +85,10 @@ public class BookFragment extends Fragment {
             private Context context;
             public BookAdapter bookAdapter;
 
+            public AsyncBookLoader(BookAdapter bookAdapter) {
+                    this.bookAdapter = bookAdapter;
+            }
+
             @Override
             protected ArrayList<LibConn.Book> doInBackground(Context... context) {
                 this.context = context[0];
@@ -139,8 +129,7 @@ public class BookFragment extends Fragment {
         }
 
         public void refresh(BookAdapter adapter, Context context) {
-            AsyncBookLoader bookLoader = new AsyncBookLoader();
-            bookLoader.bookAdapter = adapter;
+            AsyncBookLoader bookLoader = new AsyncBookLoader(adapter);
             bookLoader.execute(context);
         }
     }
@@ -173,5 +162,9 @@ public class BookFragment extends Fragment {
         lv.setAdapter(bookAdapter);
 
         return rootView;
+    }
+
+    public void refresh() {
+        data.refresh(bookAdapter, getActivity());
     }
 }

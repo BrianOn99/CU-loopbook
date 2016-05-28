@@ -66,7 +66,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        BookFragment.getInstance().refresh();
+        BookFragment f = (BookFragment) getSupportFragmentManager()
+                                          .findFragmentById(R.id.fragment_placeholder);
+        f.refresh();
     }
 
     @Override
@@ -97,7 +99,9 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(myIntent2);
                 break;
             case R.id.action_refresh:
-                BookFragment.getInstance().refresh();
+                BookFragment f = (BookFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_placeholder);
+                f.refresh();
                 break;
         }
         return true;

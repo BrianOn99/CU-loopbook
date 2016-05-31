@@ -164,6 +164,9 @@ public class BookFragment extends Fragment {
         return rootView;
     }
 
+    public void setupFloatButton() {
+    }
+
     public void refresh() {
         data.refresh(bookAdapter, getActivity());
     }

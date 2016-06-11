@@ -14,6 +14,7 @@
         android:layout_marginLeft="0dp"
         android:layout_alignParentRight="true"
         app:backgroundTint="#38C49F"
+        android:visibility="gone"
         android:src="@drawable/ic_ok" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_cancel"
@@ -24,5 +25,6 @@
         android:layout_marginRight="0dp"
         android:layout_toLeftOf="@+id/fab_go"
         app:backgroundTint="#FF6666"
+        android:visibility="gone"
         android:src="@drawable/ic_cancel" />
 </merge>

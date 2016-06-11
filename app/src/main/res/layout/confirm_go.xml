@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto" >
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@android:drawable/ic_dialog_email" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_go"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentRight="true"
+        app:backgroundTint="#38C49F"
+        android:src="@drawable/ic_ok" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_cancel"
+        app:fabSize="mini"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="0dp"
+        android:layout_toLeftOf="@+id/fab_go"
+        app:backgroundTint="#FF6666"
+        android:src="@drawable/ic_cancel" />
 </merge>

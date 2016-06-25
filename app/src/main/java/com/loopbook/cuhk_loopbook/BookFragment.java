@@ -34,7 +34,7 @@ public class BookFragment extends Fragment {
         private Context ctx;
 
         public BookAdapter(Context ctx, ArrayList<LibConn.Book> list) {
-            super(ctx, R.layout.list_item, R.id.option_text, list);
+            super(ctx, R.layout.list_item, R.id.title_text, list);
             this.books = list;
             this.ctx = ctx;
         }
@@ -49,8 +49,10 @@ public class BookFragment extends Fragment {
                                 R.drawable.green_circle :
                                 R.drawable.red_circle);
 
-            TextView tv = (TextView)view.findViewById(R.id.option_text);
-            tv.setText(book.name + "\n" + formater.format(book.dueDate.getTime()));
+            ((TextView)view.findViewById(R.id.title_text))
+                    .setText(book.name);
+            ((TextView)view.findViewById(R.id.sub_text))
+                    .setText(formater.format(book.dueDate.getTime()));
 
             return view;
         }

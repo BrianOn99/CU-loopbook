@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -9,15 +9,28 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight">
         <ImageView
-                android:id="@+id/option_icon"
-                android:layout_width="10dp"
-                android:layout_height="fill_parent"/>
+            android:id="@+id/option_icon"
+            android:layout_width="14dp"
+            android:layout_height="fill_parent"
+            android:layout_margin="8dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"/>
         <TextView
-                android:id="@+id/option_text"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:textColor="#202020"
-                android:paddingLeft="15dp"
-                android:textSize="18sp" >
-        </TextView>
-</LinearLayout>
+            android:id="@+id/title_text"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:maxLines="2"
+            android:ellipsize="middle"
+            android:singleLine="false"
+            android:layout_toRightOf="@id/option_icon"/>
+        <TextView
+            android:id="@+id/sub_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#606060"
+            android:textSize="14sp"
+            android:layout_toRightOf="@id/option_icon"
+            android:layout_below="@id/title_text"/>
+</RelativeLayout>

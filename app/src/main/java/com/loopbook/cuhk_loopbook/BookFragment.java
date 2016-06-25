@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ImageView;
@@ -24,56 +24,42 @@ public class BookFragment extends Fragment {
     private BookAdapter bookAdapter;
     public Data data;
 
-    /* Adapter for displaying books, inluding an icon showing the book status
+    /*
+     * Adapter for displaying books, inluding an icon showing the book status
      * and a text of book name and due date
-     * some code is copied from <Android Cookbook>, Oreilly 2012, recipe 9.2
      */
-    public static class BookAdapter extends BaseAdapter {
+    public static class BookAdapter extends ArrayAdapter {
         private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM", java.util.Locale.UK);
-        private LayoutInflater mInflater;
         private ArrayList<LibConn.Book> books;
-        private int viewResourceId;
         private Context ctx;
 
-        public BookAdapter(Context ctx, int viewResourceId) {
+        public BookAdapter(Context ctx, ArrayList<LibConn.Book> list) {
+            super(ctx, R.layout.list_item, R.id.option_text, list);
+            this.books = list;
             this.ctx = ctx;
-            mInflater = (LayoutInflater)ctx.getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
-            this.books = new ArrayList<LibConn.Book>();
-            this.viewResourceId = viewResourceId;
         }
 
-        public LibConn.Book getItem(int position) {
-            return books.get(position);
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public int getCount() {
-            return books.size();
-        }
-
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) { convertView = mInflater.inflate(viewResourceId, null); }
+            View view = super.getView(position, convertView, parent);
             LibConn.Book book = books.get(position);
 
-            ImageView iv = (ImageView)convertView.findViewById(R.id.option_icon);
+            ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
             iv.setImageResource(book.remainDays() >= DueChecker.getAlertDays(ctx) ?
                                 R.drawable.green_circle :
                                 R.drawable.red_circle);
 
-            TextView tv = (TextView)convertView.findViewById(R.id.option_text);
+            TextView tv = (TextView)view.findViewById(R.id.option_text);
             tv.setText(book.name + "\n" + formater.format(book.dueDate.getTime()));
 
-            return convertView;
+            return view;
         }
 
         public void setBooks(ArrayList<LibConn.Book> booksGot) {
             /* I am afraid race condition may happen in these line (issue #2),
              * but probability is very low */
-            books = booksGot;
+            books.clear();
+            books.addAll(booksGot);
             notifyDataSetChanged();
         }
     }
@@ -145,7 +131,7 @@ public class BookFragment extends Fragment {
 
         bookAdapter = new BookAdapter(
                 getActivity(),
-                R.layout.list_item);
+                new ArrayList<LibConn.Book>());
         if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
             getArguments().putBoolean("firstRun", false);
         } else {
@@ -157,7 +143,7 @@ public class BookFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
         ListView lv = (ListView) rootView.findViewById(R.id.book_list);
         lv.setAdapter(bookAdapter);
 

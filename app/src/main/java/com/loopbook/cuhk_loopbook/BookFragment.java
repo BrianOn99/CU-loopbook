@@ -8,16 +8,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ViewSwitcher;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.AsyncTask;
-
 import android.content.Context;
 
 import android.util.Log;
+
+import com.loopbook.cuhk_loopbook.view.ConfirmGoButton;
+
 
 public class BookFragment extends Fragment {
 
@@ -28,9 +33,12 @@ public class BookFragment extends Fragment {
      * Adapter for displaying books, inluding an icon showing the book status
      * and a text of book name and due date
      */
-    public static class BookAdapter extends ArrayAdapter {
+    public static class BookAdapter extends ArrayAdapter
+            implements CompoundButton.OnCheckedChangeListener {
         private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM", java.util.Locale.UK);
+        private boolean isShowingCheckbox = false;
         private ArrayList<LibConn.Book> books;
+        private boolean[] selectedStates;
         private Context ctx;
 
         public BookAdapter(Context ctx, ArrayList<LibConn.Book> list) {
@@ -44,10 +52,23 @@ public class BookFragment extends Fragment {
             View view = super.getView(position, convertView, parent);
             LibConn.Book book = books.get(position);
 
-            ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
-            iv.setImageResource(book.remainDays() >= DueChecker.getAlertDays(ctx) ?
-                                R.drawable.green_circle :
-                                R.drawable.red_circle);
+            ViewSwitcher switcher = (ViewSwitcher)view.findViewById(R.id.switcher);
+            if (isShowingCheckbox) {
+                CheckBox cb = (CheckBox)view.findViewById(R.id.book_checkbox);
+                /* The order of following 2 lines is important, otherwise when
+                 * view is switched, box will be randomly checked, because
+                 * android will reuse view randomly (convertview) */
+                cb.setTag(position);  /* For use in onCheckCHanged */
+                cb.setChecked(selectedStates[position]);
+                cb.setOnCheckedChangeListener(this);
+                switcher.setDisplayedChild(1);
+            } else {
+                ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
+                iv.setImageResource(book.remainDays() >= DueChecker.getAlertDays(ctx) ?
+                                    R.drawable.green_circle :
+                                    R.drawable.red_circle);
+                switcher.setDisplayedChild(0);
+            }
 
             ((TextView)view.findViewById(R.id.title_text))
                     .setText(book.name);
@@ -62,7 +83,31 @@ public class BookFragment extends Fragment {
              * but probability is very low */
             books.clear();
             books.addAll(booksGot);
+            selectedStates = new boolean[books.size()];
             notifyDataSetChanged();
+        }
+
+        public void showCheckBoxes(boolean yesno) {
+            isShowingCheckbox = yesno;
+            /* TODO: update view instead of notifyDataSetChanged, using
+             * View#getChildAt(int index), ListView#getFirstVisiblePosition().
+             * See: http://stackoverflow.com/questions/3724874/how-can-i-update-a-single-row-in-a-listview */
+            notifyDataSetChanged();
+        }
+
+        public ArrayList<LibConn.Book> getSelected() {
+            ArrayList<LibConn.Book> selectedList = new ArrayList<>();
+            for (int i=0; i < selectedStates.length; i++) {
+                if (selectedStates[i])
+                    selectedList.add(books.get(i));
+            }
+            return selectedList;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView,
+                boolean isChecked) {
+            selectedStates[(Integer) buttonView.getTag()] = isChecked;
         }
     }
 
@@ -130,7 +175,6 @@ public class BookFragment extends Fragment {
         setRetainInstance(true);
 
         data = new Data();
-
         bookAdapter = new BookAdapter(
                 getActivity(),
                 new ArrayList<LibConn.Book>());
@@ -148,14 +192,21 @@ public class BookFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
         ListView lv = (ListView) rootView.findViewById(R.id.book_list);
         lv.setAdapter(bookAdapter);
+        listenToConfirmGo(((ConfirmGoButton) rootView.findViewById(R.id.fab)));
 
         return rootView;
     }
 
-    public void setupFloatButton() {
-    }
-
     public void refresh() {
         data.refresh(bookAdapter, getActivity());
+    }
+
+    public void listenToConfirmGo(ConfirmGoButton cgButton) {
+        cgButton.regListener(new ConfirmGoButton.ConfirmGoListener() {
+            @Override
+            public void onStarted() { bookAdapter.showCheckBoxes(true); }
+            @Override
+            public void onCanceled() { bookAdapter.showCheckBoxes(false); }
+        });
     }
 }

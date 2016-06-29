@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Display one book item -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center_vertical"
     android:paddingLeft="10dp"
@@ -8,29 +10,42 @@
     android:layout_width="match_parent" 
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight">
+
+    <ViewSwitcher
+        android:id="@+id/switcher"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:layout_width="26dp"
+        android:layout_height="fill_parent"
+        android:layout_marginRight="5dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true">
         <ImageView
             android:id="@+id/option_icon"
-            android:layout_width="14dp"
-            android:layout_height="fill_parent"
-            android:layout_margin="8dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"/>
-        <TextView
-            android:id="@+id/title_text"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:maxLines="2"
-            android:ellipsize="middle"
-            android:singleLine="false"
-            android:layout_toRightOf="@id/option_icon"/>
-        <TextView
-            android:id="@+id/sub_text"
+            android:layout_height="fill_parent" />
+        <CheckBox
+            android:id="@+id/book_checkbox"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#606060"
-            android:textSize="14sp"
-            android:layout_toRightOf="@id/option_icon"
-            android:layout_below="@id/title_text"/>
+            android:layout_height="wrap_content" />
+    </ViewSwitcher>
+
+    <TextView
+        android:id="@+id/title_text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:maxLines="2"
+        android:ellipsize="middle"
+        android:singleLine="false"
+        android:layout_toRightOf="@id/switcher"/>
+    <TextView
+        android:id="@+id/sub_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#606060"
+        android:textSize="14sp"
+        android:layout_toRightOf="@id/switcher"
+        android:layout_below="@id/title_text"/>
 </RelativeLayout>

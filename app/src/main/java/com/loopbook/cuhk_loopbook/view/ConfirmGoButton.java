@@ -10,6 +10,12 @@ import android.widget.Toast;
 import com.loopbook.cuhk_loopbook.R;
 
 public class ConfirmGoButton extends RelativeLayout {
+    public interface ConfirmGoListener {
+        void onStarted();
+        void onCanceled();
+    }
+
+    private ConfirmGoListener listener;
     private View startButton;
     private View cancelButton;
     private View goButton;
@@ -35,14 +41,20 @@ public class ConfirmGoButton extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 switchState(State.CONFIRMING);
+                listener.onStarted();
             }
         });
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 switchState(State.READY);
+                listener.onCanceled();
             }
         });
+    }
+
+    public void regListener(ConfirmGoListener listener) {
+        this.listener = listener;
     }
 
     private void switchState(State state) {

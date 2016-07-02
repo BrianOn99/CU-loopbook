@@ -51,6 +51,9 @@ public class LibConn {
         public NoBooksError(String msg) { super(msg); }
     };
 
+    public static class RenewException extends Exception {
+    };
+
     public LibConn(String name, String passwd, CookieMonster cookieMonster) {
         this.name = name;
         this.passwd = passwd;
@@ -143,7 +146,7 @@ public class LibConn {
     }
 
     public void renewBooks(Iterable<Book> books)
-            throws java.io.IOException, java.text.ParseException {
+            throws java.io.IOException, java.text.ParseException, RenewException {
         /* A renew from command line looks like:
          * curl -b '[_cookies_here_]' \
          * -d 'renew2=i4524617&currentsortorder=current_checkout&renewsome=yes' \
@@ -161,7 +164,8 @@ public class LibConn {
         }
         Log.e("Libconn", "renewing books");
         Connection.Response resp = connectWithRetry(conn);
-        /* For debugging, log all html
+
+        /* for debugging, log all html
         String xml = resp.body();
         for(int i=0;i<xml.length();i+=4000){
             if(i+4000<xml.length())
@@ -170,6 +174,10 @@ public class LibConn {
                 Log.i("rescounter"+i,xml.substring(i, xml.length()));
         }
         */
+
+        if (resp.body().contains("showElement(\"renewfailmsg\")")) {
+            throw new RenewException();
+        }
     }
 
     /* =====================

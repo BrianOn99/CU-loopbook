@@ -111,7 +111,7 @@ public class BookFragment extends Fragment {
     }
 
     private class AsyncBookRenewer extends AsyncTask<Iterable<LibConn.Book>, Void, Void> {
-        private Exception caughtException = null;
+        String message = null;
         private LibConn conn;
         private Context context;
 
@@ -125,14 +125,16 @@ public class BookFragment extends Fragment {
             try {
                 this.conn.renewBooks(bookses[0]);
             } catch (java.io.IOException | java.text.ParseException e) {
-                caughtException = e;
+                this.message = e.getMessage();
+            } catch (LibConn.RenewException e) {
+                this.message = "Some books is not renewed";
             }
             return null;
         }
         @Override
         protected void onPostExecute(Void nothing) {
-            if (caughtException != null)
-                Toast.makeText(context, caughtException.getMessage(), Toast.LENGTH_SHORT).show();
+            if (message != null)
+                Toast.makeText(context, this.message, Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(context, "Renew request is sent", Toast.LENGTH_SHORT).show();
         }

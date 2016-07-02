@@ -110,6 +110,34 @@ public class BookFragment extends Fragment {
         }
     }
 
+    private class AsyncBookRenewer extends AsyncTask<Iterable<LibConn.Book>, Void, Void> {
+        private Exception caughtException = null;
+        private LibConn conn;
+        private Context context;
+
+        public AsyncBookRenewer(Context context, LibConn conn) {
+            this.context = context;
+            this.conn = conn;
+        }
+
+        @Override
+        protected Void doInBackground(Iterable<LibConn.Book>... bookses) {
+            try {
+                this.conn.renewBooks(bookses[0]);
+            } catch (java.io.IOException | java.text.ParseException e) {
+                caughtException = e;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void nothing) {
+            if (caughtException != null)
+                Toast.makeText(context, caughtException.getMessage(), Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(context, "Renew request is sent", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private static class Data {
 
         private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<LibConn.Book>> {
@@ -209,7 +237,8 @@ public class BookFragment extends Fragment {
             @Override
             public void onGo() {
                 LibConn conn = DataIO.getLibConn(BookFragment.this.getActivity());
-                conn.renewBooks(bookAdapter.getSelected());
+                new AsyncBookRenewer(BookFragment.this.getActivity(), conn)
+                    .execute(bookAdapter.getSelected());
             }
         });
     }

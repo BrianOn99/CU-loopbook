@@ -75,26 +75,9 @@ public class LibConn {
         Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
                                .data("code", this.name, "pin", this.passwd)
                                .method(Connection.Method.POST);
-        Connection.Response resp;
-        Document doc;
 
-        /*
-         * There is a weird bug in Android2.2 (not exist in Android4.4):
-         * If this function is invoked in alarmanager, conn.execute() will
-         * success and fail alternately (tested in wifi connection). In main
-         * thread, there is no such problem. So, try more than once.
-         */
-        for (int trial=3;; trial--) {
-            try {
-                resp = conn.execute();
-                doc = resp.parse();
-                break;
-            } catch(java.io.IOException e) {
-                Log.e("Libconn", "IOException "+e.getMessage());
-                if (trial < 1)
-                    throw new java.io.IOException("Failed connection");
-            }
-        }
+        Connection.Response resp = connectWithRetry(conn);
+        Document doc = resp.parse();
         Log.i("Libconn", "HTTP and parse ok");
 
         Elements succElm = doc.getElementsByClass("loggedInMessage");
@@ -115,6 +98,11 @@ public class LibConn {
     }
 
     /*
+     * There is a weird bug in Android2.2 (not exist in Android4.4):
+     * If this function is invoked in alarmanager, conn.execute() will
+     * success and fail alternately (tested in wifi connection). In main
+     * thread, there is no such problem. So, try more than once.
+     */
     private Connection.Response connectWithRetry(Connection conn)
             throws java.io.IOException {
         for (int trial=3;; trial--) {
@@ -128,7 +116,6 @@ public class LibConn {
             }
         }
     }
-    */
 
     public Map<String,String> loginAndSetCookie()
             throws java.io.IOException, java.text.ParseException {
@@ -155,14 +142,34 @@ public class LibConn {
         }
     }
 
-    public void renewBooks(Iterable<Book> books) {
-        Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
+    public void renewBooks(Iterable<Book> books)
+            throws java.io.IOException, java.text.ParseException {
+        /* A renew from command line looks like:
+         * curl -b '[_cookies_here_]' \
+         * -d 'renew2=i4524617&currentsortorder=current_checkout&renewsome=yes' \
+         * 'https://m.library.cuhk.edu.hk/patroninfo~S15/1289019/items~'
+         */
+        Map<String,String> cookies = getCookieFallBackLogin();
+        Connection conn = Jsoup.connect(this.bookhref)
+                               .cookies(cookies)
                                .method(Connection.Method.POST);
+        conn.data("currentsortorder", "current_checkout");
+        conn.data("renewsome", "yes");
         for (Book book: books) {
            conn.data(book.html_form_name, book.html_form_value);
            Log.d("Libconn", "Adding " + book.html_form_name +" "+ book.html_form_value);
         }
-        /* TODO: really renew */
+        Log.e("Libconn", "renewing books");
+        Connection.Response resp = connectWithRetry(conn);
+        /* For debugging, log all html
+        String xml = resp.body();
+        for(int i=0;i<xml.length();i+=4000){
+            if(i+4000<xml.length())
+                Log.i("rescounter"+i,xml.substring(i, i+4000));
+            else
+                Log.i("rescounter"+i,xml.substring(i, xml.length()));
+        }
+        */
     }
 
     /* =====================

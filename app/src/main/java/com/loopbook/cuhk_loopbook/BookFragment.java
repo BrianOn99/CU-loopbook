@@ -206,6 +206,11 @@ public class BookFragment extends Fragment {
             public void onStarted() { bookAdapter.showCheckBoxes(true); }
             @Override
             public void onCanceled() { bookAdapter.showCheckBoxes(false); }
+            @Override
+            public void onGo() {
+                LibConn conn = DataIO.getLibConn(BookFragment.this.getActivity());
+                conn.renewBooks(bookAdapter.getSelected());
+            }
         });
     }
 }

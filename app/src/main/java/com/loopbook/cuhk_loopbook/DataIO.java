@@ -21,12 +21,16 @@ public class DataIO {
             getStoredBooks(context);
     }
 
-    public static ArrayList<LibConn.Book> refreshStoredBooks(Context c) 
-                          throws IOException, java.text.ParseException {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+    public static LibConn getLibConn(Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String user_id = prefs.getString("user_id", "");
         String user_passwd = prefs.getString("user_passwd", "");
-        LibConn myLib = new LibConn(user_id, user_passwd, new CookieMonster(c));
+        return new LibConn(user_id, user_passwd, new CookieMonster(ctx));
+    }
+
+    public static ArrayList<LibConn.Book> refreshStoredBooks(Context c) 
+                          throws IOException, java.text.ParseException {
+        LibConn myLib = getLibConn(c);
         Element elm;
         try {
             elm = myLib.getBooksElement();

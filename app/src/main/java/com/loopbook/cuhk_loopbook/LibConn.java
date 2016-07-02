@@ -67,6 +67,9 @@ public class LibConn {
         return connectable;
     }
 
+    /* ========================
+     * Section: Sending Request
+     * ======================== */
     public Connection.Response login()
             throws java.io.IOException, java.text.ParseException {
         Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
@@ -111,6 +114,22 @@ public class LibConn {
         return resp;
     }
 
+    /*
+    private Connection.Response connectWithRetry(Connection conn)
+            throws java.io.IOException {
+        for (int trial=3;; trial--) {
+            try {
+                Connection.Response resp = conn.execute();
+                return resp;
+            } catch(java.io.IOException e) {
+                Log.e("Libconn", "IOException "+e.getMessage());
+                if (trial < 1)
+                    throw new java.io.IOException("Failed connection");
+            }
+        }
+    }
+    */
+
     public Map<String,String> loginAndSetCookie()
             throws java.io.IOException, java.text.ParseException {
         Connection.Response resp = login();
@@ -136,6 +155,19 @@ public class LibConn {
         }
     }
 
+    public void renewBooks(Iterable<Book> books) {
+        Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
+                               .method(Connection.Method.POST);
+        for (Book book: books) {
+           conn.data(book.html_form_name, book.html_form_value);
+           Log.d("Libconn", "Adding " + book.html_form_name +" "+ book.html_form_value);
+        }
+        /* TODO: really renew */
+    }
+
+    /* =====================
+     * Section: html parsing
+     * ===================== */
     public Element getBooksElement()
             throws java.io.IOException, java.text.ParseException {
         Document doc;

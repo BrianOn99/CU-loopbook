@@ -13,6 +13,7 @@ public class ConfirmGoButton extends RelativeLayout {
     public interface ConfirmGoListener {
         void onStarted();
         void onCanceled();
+        void onGo();
     }
 
     private ConfirmGoListener listener;
@@ -49,6 +50,13 @@ public class ConfirmGoButton extends RelativeLayout {
             public void onClick(View v) {
                 switchState(State.READY);
                 listener.onCanceled();
+            }
+        });
+        goButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchState(State.READY);
+                listener.onGo();
             }
         });
     }

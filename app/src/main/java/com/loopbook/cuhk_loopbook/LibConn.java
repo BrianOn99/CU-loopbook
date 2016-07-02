@@ -28,10 +28,16 @@ public class LibConn {
     public static class Book {
         public String name;
         public Calendar dueDate;
+        /* following 2 are used when renew */
+        public String html_form_name;  /* something like renew2 at the time of writing */
+        public String html_form_value;  /* somthing like i4524617 */
 
-        public Book(String name, Calendar dueDate) {
+        public Book(String name, Calendar dueDate,
+                String html_form_name, String html_form_value) {
             this.name = name;
             this.dueDate = dueDate;
+            this.html_form_name = html_form_name;
+            this.html_form_value = html_form_value;
         }
 
         public int remainDays() {
@@ -165,7 +171,10 @@ public class LibConn {
             }
             dueDate.set(Calendar.HOUR_OF_DAY, 23);
 
-            bookList.add(new Book(title, dueDate));
+            Element input_elm = row.select("input").first();
+
+            bookList.add(
+                new Book(title, dueDate, input_elm.attr("name"), input_elm.attr("value")));
         }
 
         return bookList;

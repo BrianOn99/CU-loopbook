@@ -1,24 +1,29 @@
 package com.loopbook.cuhk_loopbook;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+import android.util.Pair;
+
+import java.text.SimpleDateFormat;
+
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.jsoup.Connection;
 import org.jsoup.parser.Tag;
-import java.util.*;
-import java.text.SimpleDateFormat;
+import org.jsoup.select.Elements;
 
-import android.content.Context;
-import android.util.Log;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import java.util.*;
 
 public class LibConn {
     private final String name;
     private final String passwd;
+    private CookieMonster cookieMonster;
     private String bookhref;
-    private Map<String, String> cookies;
+    private static final String COOKIE_IDENTIFIER = "cuhk_lib_cookie";
+    private static final int COOKIE_LIFE = 180; /* 180sec == 3 minutes */
 
     public static class Book {
         public String name;
@@ -40,9 +45,10 @@ public class LibConn {
         public NoBooksError(String msg) { super(msg); }
     };
 
-    public LibConn(String name, String passwd) {
+    public LibConn(String name, String passwd, CookieMonster cookieMonster) {
         this.name = name;
         this.passwd = passwd;
+        this.cookieMonster = cookieMonster;
     }
 
     public static boolean isConnectable(Context context) {
@@ -55,7 +61,8 @@ public class LibConn {
         return connectable;
     }
 
-    public void login() throws java.io.IOException, java.text.ParseException {
+    public Connection.Response login()
+            throws java.io.IOException, java.text.ParseException {
         Connection conn = Jsoup.connect("https://m.library.cuhk.edu.hk/patroninfo")
                                .data("code", this.name, "pin", this.passwd)
                                .method(Connection.Method.POST);
@@ -95,16 +102,45 @@ public class LibConn {
         this.bookhref = bookListLink.attr("abs:href");
         if (this.bookhref == "")
             throw new java.text.ParseException("Cannnot get books after login", 0);
-        this.cookies = resp.cookies();
+        return resp;
     }
 
-    public Element getBooksElement() throws java.io.IOException {
+    public Map<String,String> loginAndSetCookie()
+            throws java.io.IOException, java.text.ParseException {
+        Connection.Response resp = login();
+        Map<String,String> cookies = resp.cookies();
+        /* Jsoup will strip path, date, etc, from the cookie, simplify the work */
+        /* Refer to Jsoup source HttpConnection.java */
+        cookieMonster.put(COOKIE_LIFE, COOKIE_IDENTIFIER, cookies, this.bookhref);
+        return cookies;
+    }
+
+    /* get session cookie, if not available, login to get cookie, and store it
+     * in CookieMonster */
+    /* this function should set this.bookhref */
+    public Map<String,String> getCookieFallBackLogin()
+            throws java.io.IOException, java.text.ParseException {
+        Pair<Map<String, String>,String> saved = cookieMonster.get(COOKIE_IDENTIFIER);
+        if (saved != null) {
+            Map<String,String> cookies = saved.first;
+            this.bookhref = saved.second;
+            return cookies;
+        } else {
+            return loginAndSetCookie();
+        }
+    }
+
+    public Element getBooksElement()
+            throws java.io.IOException, java.text.ParseException {
         Document doc;
         try {
-            doc = Jsoup.connect(this.bookhref).cookies(this.cookies).get();
+            Map<String,String> cookies = getCookieFallBackLogin();
+            doc = Jsoup.connect(this.bookhref).cookies(cookies).get();
         } catch(java.io.IOException e) { 
             Log.e("Libconn", "fail getting books form " + this.bookhref);
             throw new java.io.IOException("Failed getting books"); 
+        } catch(IllegalArgumentException e) {
+            throw new java.text.ParseException("web link is bad. There may be server error", 0);
         }
 
         Element table = doc.select("table.patFunc").first();
@@ -135,7 +171,8 @@ public class LibConn {
         return bookList;
     }
 
+    /* empty html element for fallback */
     public static Element newBooksElement() {
-            return new Element(Tag.valueOf("table"), "").addClass("patFunc");
+        return new Element(Tag.valueOf("table"), "").addClass("patFunc");
     }
 }

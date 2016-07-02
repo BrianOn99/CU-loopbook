@@ -26,10 +26,9 @@ public class DataIO {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String user_id = prefs.getString("user_id", "");
         String user_passwd = prefs.getString("user_passwd", "");
-        LibConn myLib = new LibConn(user_id, user_passwd);
+        LibConn myLib = new LibConn(user_id, user_passwd, new CookieMonster(c));
         Element elm;
         try {
-            myLib.login();
             elm = myLib.getBooksElement();
         } catch (LibConn.NoBooksError e) {
             /* Need to make & save an fake element, so that no notification popup */

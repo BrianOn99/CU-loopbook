@@ -1,27 +1,26 @@
 package com.loopbook.cuhk_loopbook;
 
-import java.util.*;
-import java.text.SimpleDateFormat;
-
-import android.support.v4.app.Fragment;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ViewSwitcher;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.os.AsyncTask;
-import android.content.Context;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
-import android.util.Log;
+import android.support.v4.app.Fragment;
+
+import java.text.SimpleDateFormat;
 
 import com.loopbook.cuhk_loopbook.view.ConfirmGoButton;
+import java.util.*;
 
 
 public class BookFragment extends Fragment {

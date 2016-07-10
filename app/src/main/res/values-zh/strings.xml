@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">中大LoopBook</string>
     <string name="activity_setting">設定</string>
+    <string name="activity_about">友情鏈接</string>
+
     <string name="no_books">無書喎</string>
     <string name="first_run_msg">設定完就撳「←」la</string>
 
@@ -16,4 +18,22 @@
 
     <string name="notification_title" formatted="false">%s本書就快過期 &gt;_&lt;</string>
     <string name="notification_body" formatted="false">(尚有%d日) %s</string>
+
+    <string name="about_content">
+        <![CDATA[
+        <h1>筆紙工作室</h1>
+        製造左得意嘅遊戲
+        <a href="https://play.google.com/store/apps/details?id=air.ELA3.A8">終焉之歐幾里得</a> <br/>
+        同埋提供谷歌Play 協助
+        <h1><a href="https://jsoup.org/">Jsoup</a></h1>
+        很強大的html parser <br/>
+        open source under MIT License <br/>
+        <h1>晚上青年</h1>
+        報告臭蟲1號<br/>
+        <br/>
+        <h3>
+        這個軟件以MIT許可證發佈, 放喺<a href="https://github.com/BrianOn99/CU-loopbook">github</a>
+        </h3>
+        ]]>
+    </string>
 </resources>

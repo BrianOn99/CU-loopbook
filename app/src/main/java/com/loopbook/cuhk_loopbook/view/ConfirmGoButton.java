@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -13,10 +14,11 @@ public class ConfirmGoButton extends RelativeLayout {
     public interface ConfirmGoListener {
         void onStarted();
         void onCanceled();
-        void onGo();
+        boolean onGo();
     }
 
     private ConfirmGoListener listener;
+    private ProgressBar loadSpinner;
     private View startButton;
     private View cancelButton;
     private View goButton;
@@ -29,12 +31,14 @@ public class ConfirmGoButton extends RelativeLayout {
         View view = inflater.inflate(R.layout.confirm_go, this);
         bindView(view);
         setupButons();
+        switchState(State.BUSY);
     }
 
     private void bindView(View view) {
         startButton = view.findViewById(R.id.fab_start);
         cancelButton = view.findViewById(R.id.fab_cancel);
         goButton = view.findViewById(R.id.fab_go);
+        loadSpinner = (ProgressBar) view.findViewById(R.id.load_spinner);
     }
 
     private void setupButons() {
@@ -56,7 +60,9 @@ public class ConfirmGoButton extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 switchState(State.READY);
-                listener.onGo();
+                if (listener.onGo()) {
+                    switchState(State.BUSY);
+                }
             }
         });
     }
@@ -71,14 +77,27 @@ public class ConfirmGoButton extends RelativeLayout {
             cancelButton.setVisibility(View.GONE);
             goButton.setVisibility(View.GONE);
             startButton.setVisibility(View.VISIBLE);
+            loadSpinner.setVisibility(View.GONE);
             break;
         case CONFIRMING:
             cancelButton.setVisibility(View.VISIBLE);
             goButton.setVisibility(View.VISIBLE);
             startButton.setVisibility(View.GONE);
+            loadSpinner.setVisibility(View.GONE);
             break;
         case BUSY:
+            cancelButton.setVisibility(View.GONE);
+            goButton.setVisibility(View.GONE);
+            startButton.setVisibility(View.GONE);
+            loadSpinner.setVisibility(View.VISIBLE);
             break;
         }
+    }
+
+    public void doingWork() {
+        switchState(State.BUSY);
+    }
+    public void finishedWork() {
+        switchState(State.READY);
     }
 }

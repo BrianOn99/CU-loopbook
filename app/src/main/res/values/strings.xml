@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">中大LoopBook</string>
     <string name="activity_setting">Setting</string>
+    <string name="activity_about">Thanks</string>
+
     <string name="no_books">No Books in Account</string>
     <string name="first_run_msg">press ← when finished</string>
 
@@ -18,4 +20,21 @@
 
     <string name="notification_title" formatted="false">%s Book coming due</string>
     <string name="notification_body" formatted="false">(%d days left) %s</string>
+
+    <string name="about_content">
+        <![CDATA[
+        <h1>Thanks But Zi Workshop</h1>
+        for making the interesting game
+        <a href="https://play.google.com/store/apps/details?id=air.ELA3.A8">ELA</a> <br/>
+        and for providing google play account <br/>
+        <h1>Thanks <a href="https://jsoup.org/">Jsoup</a></h1>
+        for open source their HTML parser under MIT License <br/>
+        <h1>Thanks Fei Ching</h1>
+        for reporting a bug <br/>
+        <br/>
+        <h3>
+        This software is under MIT, source in <a href="https://github.com/BrianOn99/CU-loopbook">github</a>
+        </h3>
+        ]]>
+    </string>
 </resources>

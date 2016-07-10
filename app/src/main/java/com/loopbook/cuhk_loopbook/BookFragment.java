@@ -26,7 +26,7 @@ import java.util.*;
 public class BookFragment extends Fragment {
 
     private BookAdapter bookAdapter;
-    public Data data;
+    private ConfirmGoButton cgButton;
 
     /*
      * Adapter for displaying books, inluding an icon showing the book status
@@ -114,10 +114,13 @@ public class BookFragment extends Fragment {
         String message = null;
         private LibConn conn;
         private Context context;
+        private ConfirmGoButton cgButton;
 
-        public AsyncBookRenewer(Context context, LibConn conn) {
+        public AsyncBookRenewer(Context context, LibConn conn, ConfirmGoButton cgButton) {
             this.context = context;
             this.conn = conn;
+            this.cgButton = cgButton;
+            cgButton.doingWork();
         }
 
         @Override
@@ -133,6 +136,7 @@ public class BookFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Void nothing) {
+            cgButton.finishedWork();
             if (message != null)
                 Toast.makeText(context, this.message, Toast.LENGTH_SHORT).show();
             else
@@ -140,59 +144,55 @@ public class BookFragment extends Fragment {
         }
     }
 
-    private static class Data {
+    private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<LibConn.Book>> {
+        private Exception caughtException = null;
+        private Context context;
+        private ConfirmGoButton cgButton;
+        public BookAdapter bookAdapter;
 
-        private class AsyncBookLoader extends AsyncTask<Context, String, ArrayList<LibConn.Book>> {
-            private Exception caughtException = null;
-            private Context context;
-            public BookAdapter bookAdapter;
-
-            public AsyncBookLoader(BookAdapter bookAdapter) {
-                    this.bookAdapter = bookAdapter;
-            }
-
-            @Override
-            protected ArrayList<LibConn.Book> doInBackground(Context... context) {
-                this.context = context[0];
-                String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
-                publishProgress(msg);
-
-                ArrayList<LibConn.Book> booksGot;
-                try {
-                    booksGot = DataIO.getBooks(this.context);
-                } catch (java.io.IOException | java.text.ParseException e) {
-                    caughtException = e;
-                    return null;
-                }
-
-                return booksGot;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... msgs) {
-                Toast.makeText(this.context, msgs[0], Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<LibConn.Book> booksGot) {
-                if (caughtException != null) {
-                    Toast.makeText(context,
-                            caughtException.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    if (booksGot.size() == 0) {
-                        Toast.makeText(context,
-                                context.getString(R.string.no_books),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    bookAdapter.setBooks(booksGot);
-                }
-            }
+        public AsyncBookLoader(BookAdapter bookAdapter, ConfirmGoButton cgButton) {
+            this.bookAdapter = bookAdapter;
+            this.cgButton = cgButton;
+            cgButton.doingWork();
         }
 
-        public void refresh(BookAdapter adapter, Context context) {
-            AsyncBookLoader bookLoader = new AsyncBookLoader(adapter);
-            bookLoader.execute(context);
+        @Override
+        protected ArrayList<LibConn.Book> doInBackground(Context... context) {
+            this.context = context[0];
+            String msg = LibConn.isConnectable(this.context) ? "connecting" : "No connection";
+            publishProgress(msg);
+
+            ArrayList<LibConn.Book> booksGot;
+            try {
+                booksGot = DataIO.getBooks(this.context);
+            } catch (java.io.IOException | java.text.ParseException e) {
+                caughtException = e;
+                return null;
+            }
+
+            return booksGot;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... msgs) {
+            Toast.makeText(this.context, msgs[0], Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<LibConn.Book> booksGot) {
+            cgButton.finishedWork();
+            if (caughtException != null) {
+                Toast.makeText(context,
+                        caughtException.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                if (booksGot.size() == 0) {
+                    Toast.makeText(context,
+                            context.getString(R.string.no_books),
+                            Toast.LENGTH_SHORT).show();
+                }
+                bookAdapter.setBooks(booksGot);
+            }
         }
     }
 
@@ -202,16 +202,6 @@ public class BookFragment extends Fragment {
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
-
-        data = new Data();
-        bookAdapter = new BookAdapter(
-                getActivity(),
-                new ArrayList<LibConn.Book>());
-        if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
-            getArguments().putBoolean("firstRun", false);
-        } else {
-            refresh();
-        }
     }
 
     @Override
@@ -220,27 +210,39 @@ public class BookFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
         ListView lv = (ListView) rootView.findViewById(R.id.book_list);
+        cgButton = ((ConfirmGoButton) rootView.findViewById(R.id.fab));
+        listenToConfirmGo(cgButton);
+
+        bookAdapter = new BookAdapter(
+                getActivity(),
+                new ArrayList<LibConn.Book>());
+        if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
+            getArguments().putBoolean("firstRun", false);
+        } else {
+            refresh();
+        }
         lv.setAdapter(bookAdapter);
-        listenToConfirmGo(((ConfirmGoButton) rootView.findViewById(R.id.fab)));
 
         return rootView;
     }
 
     public void refresh() {
-        data.refresh(bookAdapter, getActivity());
+        AsyncBookLoader bookLoader = new AsyncBookLoader(bookAdapter, cgButton);
+        bookLoader.execute(getActivity());
     }
 
-    public void listenToConfirmGo(ConfirmGoButton cgButton) {
+    public void listenToConfirmGo(final ConfirmGoButton cgButton) {
         cgButton.regListener(new ConfirmGoButton.ConfirmGoListener() {
             @Override
             public void onStarted() { bookAdapter.showCheckBoxes(true); }
             @Override
             public void onCanceled() { bookAdapter.showCheckBoxes(false); }
             @Override
-            public void onGo() {
+            public boolean onGo() {
                 LibConn conn = DataIO.getLibConn(BookFragment.this.getActivity());
-                new AsyncBookRenewer(BookFragment.this.getActivity(), conn)
+                new AsyncBookRenewer(BookFragment.this.getActivity(), conn, cgButton)
                     .execute(bookAdapter.getSelected());
+                return true;
             }
         });
     }

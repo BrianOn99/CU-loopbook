@@ -85,6 +85,10 @@ public class MainActivity extends ActionBarActivity {
                 Intent myIntent1 = new Intent(this, Setting.class);
                 startActivityForResult(myIntent1, 1);
                 break;
+            case R.id.action_about:
+                Intent myIntent3 = new Intent(this, About.class);
+                startActivity(myIntent3);
+                break;
             case R.id.action_renew:
                 /* after many despairing attempt to open chrome with POST
                  * method, I found that I can log in with GET method!!!

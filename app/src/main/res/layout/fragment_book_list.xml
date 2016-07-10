@@ -19,10 +19,11 @@
 
     <com.loopbook.cuhk_loopbook.view.ConfirmGoButton
         android:id="@+id/fab"
+        android:background="#33000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="0px"
         android:src="@android:drawable/ic_dialog_email" />
 </RelativeLayout>

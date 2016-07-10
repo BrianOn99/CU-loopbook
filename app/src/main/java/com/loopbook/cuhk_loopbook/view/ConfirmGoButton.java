@@ -74,21 +74,21 @@ public class ConfirmGoButton extends RelativeLayout {
     private void switchState(State state) {
         switch (state) {
         case READY:
-            cancelButton.setVisibility(View.GONE);
-            goButton.setVisibility(View.GONE);
+            cancelButton.setVisibility(View.INVISIBLE);
+            goButton.setVisibility(View.INVISIBLE);
             startButton.setVisibility(View.VISIBLE);
-            loadSpinner.setVisibility(View.GONE);
+            loadSpinner.setVisibility(View.INVISIBLE);
             break;
         case CONFIRMING:
             cancelButton.setVisibility(View.VISIBLE);
             goButton.setVisibility(View.VISIBLE);
-            startButton.setVisibility(View.GONE);
-            loadSpinner.setVisibility(View.GONE);
+            startButton.setVisibility(View.INVISIBLE);
+            loadSpinner.setVisibility(View.INVISIBLE);
             break;
         case BUSY:
-            cancelButton.setVisibility(View.GONE);
-            goButton.setVisibility(View.GONE);
-            startButton.setVisibility(View.GONE);
+            cancelButton.setVisibility(View.INVISIBLE);
+            goButton.setVisibility(View.INVISIBLE);
+            startButton.setVisibility(View.INVISIBLE);
             loadSpinner.setVisibility(View.VISIBLE);
             break;
         }

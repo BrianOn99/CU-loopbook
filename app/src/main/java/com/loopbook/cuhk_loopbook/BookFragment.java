@@ -202,6 +202,9 @@ public class BookFragment extends Fragment {
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
+        bookAdapter = new BookAdapter(
+                getActivity(),
+                new ArrayList<LibConn.Book>());
     }
 
     @Override
@@ -210,18 +213,15 @@ public class BookFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
         ListView lv = (ListView) rootView.findViewById(R.id.book_list);
+        lv.setAdapter(bookAdapter);
         cgButton = ((ConfirmGoButton) rootView.findViewById(R.id.fab));
         listenToConfirmGo(cgButton);
 
-        bookAdapter = new BookAdapter(
-                getActivity(),
-                new ArrayList<LibConn.Book>());
         if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
             getArguments().putBoolean("firstRun", false);
         } else {
             refresh();
         }
-        lv.setAdapter(bookAdapter);
 
         return rootView;
     }

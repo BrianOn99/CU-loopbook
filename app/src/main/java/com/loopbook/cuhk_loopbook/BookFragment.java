@@ -27,6 +27,7 @@ public class BookFragment extends Fragment {
 
     private BookAdapter bookAdapter;
     private ConfirmGoButton cgButton;
+    private boolean created;
 
     /*
      * Adapter for displaying books, inluding an icon showing the book status
@@ -59,7 +60,12 @@ public class BookFragment extends Fragment {
                  * android will reuse view randomly (convertview) */
                 cb.setTag(position);  /* For use in onCheckCHanged */
                 cb.setChecked(selectedStates[position]);
-                cb.setOnCheckedChangeListener(this);
+                /* Prevent renewing book too early. Number is just a guess */
+                if (book.remainDays() < 6) {
+                    cb.setOnCheckedChangeListener(this);
+                } else {
+                    cb.setEnabled(false);
+                }
                 switcher.setDisplayedChild(1);
             } else {
                 ImageView iv = (ImageView)view.findViewById(R.id.option_icon);
@@ -141,6 +147,8 @@ public class BookFragment extends Fragment {
                 Toast.makeText(context, this.message, Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(context, "Renew request is sent", Toast.LENGTH_SHORT).show();
+            BookFragment.this.bookAdapter.showCheckBoxes(false);
+            BookFragment.this.refresh();
         }
     }
 
@@ -205,6 +213,7 @@ public class BookFragment extends Fragment {
         bookAdapter = new BookAdapter(
                 getActivity(),
                 new ArrayList<LibConn.Book>());
+        this.created = true;
     }
 
     @Override
@@ -219,7 +228,8 @@ public class BookFragment extends Fragment {
 
         if  (getArguments() != null ? getArguments().getBoolean("firstRun", false) : false) {
             getArguments().putBoolean("firstRun", false);
-        } else {
+        } else if (this.created) {
+            this.created = false;
             refresh();
         }
 
@@ -238,11 +248,15 @@ public class BookFragment extends Fragment {
             @Override
             public void onCanceled() { bookAdapter.showCheckBoxes(false); }
             @Override
-            public boolean onGo() {
+            public void onGo() {
+                ArrayList<LibConn.Book> selectedBooks = bookAdapter.getSelected();
+                Context ctx = BookFragment.this.getActivity();
+                if (selectedBooks.size() == 0) {
+                    Toast.makeText(ctx, "You must select >1 book", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 LibConn conn = DataIO.getLibConn(BookFragment.this.getActivity());
-                new AsyncBookRenewer(BookFragment.this.getActivity(), conn, cgButton)
-                    .execute(bookAdapter.getSelected());
-                return true;
+                new AsyncBookRenewer(ctx, conn, cgButton).execute(selectedBooks);
             }
         });
     }

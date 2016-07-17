@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopbook.cuhk_loopbook.R;
@@ -14,12 +15,12 @@ public class ConfirmGoButton extends RelativeLayout {
     public interface ConfirmGoListener {
         void onStarted();
         void onCanceled();
-        boolean onGo();
+        void onGo();
     }
 
     private ConfirmGoListener listener;
     private ProgressBar loadSpinner;
-    private View startButton;
+    private TextView startButton;
     private View cancelButton;
     private View goButton;
 
@@ -30,12 +31,13 @@ public class ConfirmGoButton extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.confirm_go, this);
         bindView(view);
+        startButton.setText("Renew");
         setupButons();
-        switchState(State.BUSY);
+        switchState(State.READY);
     }
 
     private void bindView(View view) {
-        startButton = view.findViewById(R.id.fab_start);
+        startButton = (TextView) view.findViewById(R.id.fab_start);
         cancelButton = view.findViewById(R.id.fab_cancel);
         goButton = view.findViewById(R.id.fab_go);
         loadSpinner = (ProgressBar) view.findViewById(R.id.load_spinner);
@@ -59,10 +61,7 @@ public class ConfirmGoButton extends RelativeLayout {
         goButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchState(State.READY);
-                if (listener.onGo()) {
-                    switchState(State.BUSY);
-                }
+                listener.onGo();
             }
         });
     }

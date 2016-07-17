@@ -18,7 +18,7 @@
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
     </style> <!-- not supported for api < 15 -->
 
-    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <!-- Actionbar color -->
         <item name="colorPrimary">@color/accent_material_dark</item>
